@@ -8,21 +8,22 @@ public class EcoTrackDbContext : DbContext
 {
     private readonly IUserContext _userContext;
 
-    public DbSet<Empreendimento> Empreendimentos => Set<Empreendimento>();
-
-    public EcoTrackDbContext(DbContextOptions<EcoTrackDbContext> options, IUserContext userContext) : base(options)
+    public EcoTrackDbContext(DbContextOptions<EcoTrackDbContext> options, IUserContext userContext) 
+        : base(options)
     {
         _userContext = userContext;
     }
 
+    public DbSet<Empreendimento> Empreendimentos => Set<Empreendimento>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Aplica os mapeamentos Fluent API
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(EcoTrackDbContext).Assembly);
+        base.OnModelCreating(modelBuilder);
 
-        // Aplica o filtro global de Multi-tenancy automaticamente
+        // Aplica o Global Query Filter para isolar por TenantId automaticamente
         modelBuilder.Entity<Empreendimento>().HasQueryFilter(e => e.TenantId == _userContext.TenantId);
 
-        base.OnModelCreating(modelBuilder);
+        // Se houverem outras entidades com TenantId no futuro, você aplica aqui também:
+        // modelBuilder.Entity<OutraEntidade>().HasQueryFilter(x => x.TenantId == _userContext.TenantId);
     }
 }
