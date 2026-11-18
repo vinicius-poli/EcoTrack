@@ -1,6 +1,8 @@
+using EcoTrack.Domain.Auth;
 using EcoTrack.Domain.Empreendimentos;
 using EcoTrack.Infrastructure.Persistence;
 using EcoTrack.Infrastructure.Persistence.Repositories;
+using EcoTrack.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +19,8 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString));
 
         services.AddScoped<IEmpreendimentoRepository, EmpreendimentoRepository>();
+
+        services.AddScoped<IEmissorTokens, JwtTokenGenerator>();
 
         return services;
     }

@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-//using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +8,8 @@ using EcoTrack.Infrastructure;
 using EcoTrack.Infrastructure.Persistence;
 using EcoTrack.Domain.Auth;
 using EcoTrack.WebApi.Services;
+using EcoTrack.Infrastructure.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,9 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 
-// Configuração de Autenticação e JWT (Padrão Academia do Programador)
-// Nota: Descomente e ajuste quando implementar o JwtTokenGenerator e JwtOptions
-/*
+// Configuração de Autenticação e JWT
+
 builder.Services.AddScoped<IEmissorTokens, JwtTokenGenerator>();
 builder.Services
     .AddOptions<JwtOptions>()
@@ -74,7 +74,7 @@ builder.Services
     .SetFallbackPolicy(new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build());
-*/
+
 
 builder.Services.AddControllers(options =>
     options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
