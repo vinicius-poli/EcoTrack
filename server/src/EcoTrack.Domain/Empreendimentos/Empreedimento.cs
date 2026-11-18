@@ -4,6 +4,8 @@ namespace EcoTrack.Domain.Empreendimentos;
 
 public sealed class Empreendimento : Entity<Empreendimento>
 {
+    public Guid UserId { get; set; }
+    public Guid TenantId { get; set; }
     public string RazaoSocial { get; set; } = string.Empty;
     public string NomeFantasia { get; set; } = string.Empty;
     public string Cnpj { get; set; } = string.Empty;
