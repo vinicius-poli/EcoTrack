@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using EcoTrack.Application;
 using EcoTrack.Infrastructure;
 using EcoTrack.Infrastructure.Persistence;
+using EcoTrack.Domain.Auth;
+using EcoTrack.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +78,9 @@ builder.Services
 
 builder.Services.AddControllers(options =>
     options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUserContext, UserContext>();
 
 // OpenAPI nativo do .NET
 builder.Services.AddOpenApi();

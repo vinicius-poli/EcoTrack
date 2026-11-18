@@ -2,7 +2,7 @@ using System.Security.Claims;
 using EcoTrack.Domain.Auth;
 
 
-namespace EcoTrack.Infrastructure.Security;
+namespace EcoTrack.WebApi.Services;
 
 public class UserContext : IUserContext
 {
