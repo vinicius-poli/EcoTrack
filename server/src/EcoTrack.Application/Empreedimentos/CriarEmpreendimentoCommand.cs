@@ -1,4 +1,5 @@
 using EcoTrack.Application.Common;
+using EcoTrack.Domain.Auth;
 using EcoTrack.Domain.Empreendimentos;
 using FluentResults;
 using MediatR;
@@ -20,15 +21,25 @@ public sealed record CriarEmpreendimentoCommand(CriarEmpreendimentoRequest Reque
 public sealed class CriarEmpreendimentoCommandHandler : IRequestHandler<CriarEmpreendimentoCommand, Result<Guid>>
 {
     private readonly IEmpreendimentoRepository _empreendimentoRepository;
+    private readonly IUserContext _userContext; // <-- Injetamos o contexto aqui
 
-    public CriarEmpreendimentoCommandHandler(IEmpreendimentoRepository empreendimentoRepository)
+    public CriarEmpreendimentoCommandHandler(
+        IEmpreendimentoRepository empreendimentoRepository, 
+        IUserContext userContext)
     {
         _empreendimentoRepository = empreendimentoRepository;
+        _userContext = userContext;
     }
 
     public async Task<Result<Guid>> Handle(CriarEmpreendimentoCommand requestModel, CancellationToken cancellationToken)
     {
         var req = requestModel.Request;
+
+        // Garantir que temos o TenantId da sessão atual
+        if (_userContext.TenantId is null)
+        {
+            return Result.Fail<Guid>(Erros.Criar("Tenant não identificado na sessão.", "TenantId"));
+        }
 
         var empreendimento = new Empreendimento
         {
@@ -38,8 +49,10 @@ public sealed class CriarEmpreendimentoCommandHandler : IRequestHandler<CriarEmp
             Municipio = req.Municipio,
             Uf = req.Uf,
             Porte = req.Porte,
-            StatusLicenciamento = req.StatusLicenciamento
-        };
+            StatusLicenciamento = req.StatusLicenciamento,
+            TenantId = _userContext.TenantId.Value,
+            UserId = _userContext.UserId ?? Guid.Empty
+        };        
 
         // Validação da entidade
         var errosValidacao = empreendimento.Validar();
