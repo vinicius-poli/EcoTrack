@@ -1,3 +1,5 @@
+using EcoTrack.Domain.Licencas;
+
 namespace EcoTrack.Application.Common;
 
 public sealed record EmpreendimentoDto(
@@ -9,6 +11,24 @@ public sealed record EmpreendimentoDto(
     string Uf,
     string Porte,
     string StatusLicenciamento,
+    DateTime CreatedAtUtc,
+    DateTime UpdatedAtUtc
+);
+
+public sealed record LicencaDto(
+    Guid Id,
+    Guid EmpreendimentoId,
+    string NumeroProcesso,
+    string NumeroLicenca,
+    string OrgaoEmissor,
+    TipoLicenca Tipo,
+    DateTime DataEmissao,
+    DateTime DataValidade,
+    int DiasAntecedenciaRenovacao,
+    DateTime DataLimiteProtocoloRenovacao,
+    StatusLicenca Status,
+    string? NumeroProtocoloRenovacao,
+    DateTime? DataProtocoloRenovacao,
     DateTime CreatedAtUtc,
     DateTime UpdatedAtUtc
 );

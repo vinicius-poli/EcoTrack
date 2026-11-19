@@ -1,4 +1,5 @@
 using EcoTrack.Domain.Empreendimentos;
+using EcoTrack.Domain.Licencas;
 
 namespace EcoTrack.Application.Common;
 
@@ -19,4 +20,22 @@ public static partial class DtoMapper
             entidade.UpdatedAtUtc
         );
     }
+    public static LicencaDto ToDto(this Licenca licenca) =>
+    new(
+        licenca.Id,
+        licenca.EmpreendimentoId,
+        licenca.NumeroProcesso,
+        licenca.NumeroLicenca,
+        licenca.OrgaoEmissor,
+        licenca.Tipo,
+        licenca.DataEmissao,
+        licenca.DataValidade,
+        licenca.DiasAntecedenciaRenovacao,
+        licenca.DataLimiteProtocoloRenovacao,
+        licenca.Status,
+        licenca.NumeroProtocoloRenovacao,
+        licenca.DataProtocoloRenovacao,
+        licenca.CreatedAtUtc,
+        licenca.UpdatedAtUtc
+    );
 }
