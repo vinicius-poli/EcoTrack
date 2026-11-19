@@ -1,4 +1,4 @@
-namespace EcoTrack.Infrastructure.Security;
+namespace EcoTrack.Infrastructure.Auth;
 
 public class JwtOptions
 {

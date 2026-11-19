@@ -1,29 +1,30 @@
 using EcoTrack.Domain.Auth;
 using EcoTrack.Domain.Empreendimentos;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcoTrack.Infrastructure.Persistence;
 
-public class EcoTrackDbContext : DbContext
+public class EcoTrackDbContext : IdentityDbContext<EcoTrackUser, IdentityRole<Guid>, Guid>
 {
     private readonly IUserContext _userContext;
 
-    public EcoTrackDbContext(DbContextOptions<EcoTrackDbContext> options, IUserContext userContext) 
+    public EcoTrackDbContext(DbContextOptions<EcoTrackDbContext> options, IUserContext userContext)
         : base(options)
     {
         _userContext = userContext;
     }
 
     public DbSet<Empreendimento> Empreendimentos => Set<Empreendimento>();
+    public DbSet<TokenRevogado> TokensRevogados => Set<TokenRevogado>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Aplica o Global Query Filter para isolar por TenantId automaticamente
-        modelBuilder.Entity<Empreendimento>().HasQueryFilter(e => e.TenantId == _userContext.TenantId);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(EcoTrackDbContext).Assembly);
 
-        // Se houverem outras entidades com TenantId no futuro, você aplica aqui também:
-        // modelBuilder.Entity<OutraEntidade>().HasQueryFilter(x => x.TenantId == _userContext.TenantId);
+        modelBuilder.Entity<Empreendimento>().HasQueryFilter(e => e.TenantId == _userContext.TenantId);
     }
 }

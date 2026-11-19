@@ -23,15 +23,14 @@ public sealed class AutenticarUsuarioCommandHandler(
                 Erros.Criar("E-mail e senha são obrigatórios.", "credenciais"));
         }
 
-        var usuario = await identidade.AutenticarAsync(command.Email, command.Senha, ct);
-        if (usuario is null)
+        CredenciaisUsuario? credenciais = await identidade.AutenticarAsync(command.Email, command.Senha, ct); //Não pode ser aqui o problema?
+        if (credenciais is null)
         {
             return Result.Fail<TokenDto>(Erros.Criar("Credenciais inválidas.", "Autenticação"));
         }
 
-        // Gera o token passando as claims essenciais para o Multi-tenancy (UserId e TenantId)
-        var token = emissorTokens.GerarToken(usuario.Id, usuario.Email, usuario.TenantId);
+        Domain.Auth.TokenDto tokenGerado = emissorTokens.GerarToken(credenciais);
 
-        return Result.Ok(new TokenDto(token));
+        return Result.Ok(new TokenDto(tokenGerado.AccessToken));
     }
 }

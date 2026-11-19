@@ -5,7 +5,7 @@ using EcoTrack.Domain.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace EcoTrack.Infrastructure.Security;
+namespace EcoTrack.Infrastructure.Auth;
 
 public class JwtTokenGenerator : IEmissorTokens
 {
@@ -16,7 +16,7 @@ public class JwtTokenGenerator : IEmissorTokens
         _jwtOptions = jwtOptions.Value;
     }
 
-    public TokenDto CriarToken(CredenciaisUsuario usuario)
+    public TokenDto GerarToken(CredenciaisUsuario usuario)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_jwtOptions.SigningKey);

@@ -3,12 +3,13 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using EcoTrack.Application;
 using EcoTrack.Infrastructure;
 using EcoTrack.Infrastructure.Persistence;
 using EcoTrack.Domain.Auth;
 using EcoTrack.WebApi.Services;
-using EcoTrack.Infrastructure.Security;
+using EcoTrack.Infrastructure.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +19,6 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 
 // Configuração de Autenticação e JWT
-
 builder.Services.AddScoped<IEmissorTokens, JwtTokenGenerator>();
 builder.Services
     .AddOptions<JwtOptions>()
@@ -33,41 +33,41 @@ var jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOption
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidIssuer = jwt.Issuer,
-        ValidateAudience = true,
-        ValidAudience = jwt.Audience,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.SigningKey)),
-        NameClaimType = JwtRegisteredClaimNames.Sub,
-        ClockSkew = TimeSpan.FromSeconds(30)
-    };
-
-    options.MapInboundClaims = false;
-    options.Events = new JwtBearerEvents
-    {
-        OnTokenValidated = async context =>
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-            if (string.IsNullOrWhiteSpace(jti))
-            {
-                context.Fail("Token sem identificador.");
-                return;
-            }
+            ValidateIssuer = true,
+            ValidIssuer = jwt.Issuer,
+            ValidateAudience = true,
+            ValidAudience = jwt.Audience,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.SigningKey)),
+            NameClaimType = JwtRegisteredClaimNames.Sub,
+            ClockSkew = TimeSpan.FromSeconds(30)
+        };
 
-            var revocation = context.HttpContext.RequestServices.GetRequiredService<IRevogacaoToken>();
-
-            if (await revocation.EstaRevogadoAsync(jti, context.HttpContext.RequestAborted))
+        options.MapInboundClaims = false;
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
             {
-                context.Fail("Token revogado.");
+                var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+                if (string.IsNullOrWhiteSpace(jti))
+                {
+                    context.Fail("Token sem identificador.");
+                    return;
+                }
+
+                var revocation = context.HttpContext.RequestServices.GetRequiredService<IRevogacaoToken>();
+
+                if (await revocation.EstaRevogadoAsync(jti, context.HttpContext.RequestAborted))
+                {
+                    context.Fail("Token revogado.");
+                }
             }
-        }
-    };
-});
+        };
+    });
 
 builder.Services
     .AddAuthorizationBuilder()
@@ -75,15 +75,39 @@ builder.Services
         .RequireAuthenticatedUser()
         .Build());
 
-
 builder.Services.AddControllers(options =>
     options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserContext>();
 
-// OpenAPI nativo do .NET
-builder.Services.AddOpenApi();
+// OpenAPI nativo do .NET com esquema Bearer para o botão Authorize no Swagger UI
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, _, _) =>
+    {
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+
+        document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Description = "Cole apenas o token JWT (o prefixo 'Bearer ' é adicionado automaticamente)."
+        };
+
+        document.Security ??= [];
+        document.Security.Add(new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+        });
+
+        return Task.CompletedTask;
+    });
+});
 
 var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options => options.AddPolicy("Client", policy =>
@@ -132,5 +156,3 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
-
-public partial class Program;

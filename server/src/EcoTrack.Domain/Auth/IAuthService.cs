@@ -22,7 +22,7 @@ public interface IGerenciadorIdentidade
 
 public interface IEmissorTokens
 {
-    TokenDto CriarToken(CredenciaisUsuario usuario);
+    TokenDto GerarToken(CredenciaisUsuario usuario);
 }
 
 public interface IRevogacaoToken
