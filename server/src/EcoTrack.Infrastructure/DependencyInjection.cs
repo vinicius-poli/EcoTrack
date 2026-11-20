@@ -1,4 +1,5 @@
 using EcoTrack.Domain.Auth;
+using EcoTrack.Domain.Condicionantes;
 using EcoTrack.Domain.Empreendimentos;
 using EcoTrack.Domain.Licencas;
 using EcoTrack.Infrastructure.Auth;
@@ -30,6 +31,8 @@ public static class DependencyInjection
 
         services.AddScoped<IEmpreendimentoRepository, EmpreendimentoRepository>();
         services.AddScoped<ILicencaRepository, LicencaRepository>();
+        services.AddScoped<ICondicionanteRepository, CondicionanteRepository>();
+        //services.AddScoped<IEvidenciaStorageService, ...>();
         services.AddScoped<IGerenciadorIdentidade, GerenciadorIdentidade>();
         services.AddScoped<IEmissorTokens, JwtTokenGenerator>();
         services.AddScoped<IRevogacaoToken, RevogacaoTokenService>();
