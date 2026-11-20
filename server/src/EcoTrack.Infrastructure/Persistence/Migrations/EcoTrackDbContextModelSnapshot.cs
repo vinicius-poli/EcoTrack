@@ -22,6 +22,119 @@ namespace EcoTrack.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("EcoTrack.Domain.Condicionantes.Condicionante", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CodigoItem")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataVencimento")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<Guid>("LicencaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Periodicidade")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ResponsavelTecnico")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LicencaId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("LicencaId", "CodigoItem");
+
+                    b.ToTable("TBCondicionante", (string)null);
+                });
+
+            modelBuilder.Entity("EcoTrack.Domain.Condicionantes.EvidenciaCondicionante", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CondicionanteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime>("DataUploadUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EnviadoPorUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("IdentificadorArmazenamento")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("NomeOriginalArquivo")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<string>("NumeroArt")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Observacao")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<long>("TamanhoBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CondicionanteId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("TBEvidenciaCondicionante", (string)null);
+                });
+
             modelBuilder.Entity("EcoTrack.Domain.Empreendimentos.Empreendimento", b =>
                 {
                     b.Property<Guid>("Id")
@@ -385,6 +498,28 @@ namespace EcoTrack.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("EcoTrack.Domain.Condicionantes.Condicionante", b =>
+                {
+                    b.HasOne("EcoTrack.Domain.Licencas.Licenca", "Licenca")
+                        .WithMany()
+                        .HasForeignKey("LicencaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Licenca");
+                });
+
+            modelBuilder.Entity("EcoTrack.Domain.Condicionantes.EvidenciaCondicionante", b =>
+                {
+                    b.HasOne("EcoTrack.Domain.Condicionantes.Condicionante", "Condicionante")
+                        .WithMany("Evidencias")
+                        .HasForeignKey("CondicionanteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Condicionante");
+                });
+
             modelBuilder.Entity("EcoTrack.Domain.Licencas.Licenca", b =>
                 {
                     b.HasOne("EcoTrack.Domain.Empreendimentos.Empreendimento", "Empreendimento")
@@ -445,6 +580,11 @@ namespace EcoTrack.Infrastructure.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EcoTrack.Domain.Condicionantes.Condicionante", b =>
+                {
+                    b.Navigation("Evidencias");
                 });
 #pragma warning restore 612, 618
         }
