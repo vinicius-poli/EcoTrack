@@ -1,3 +1,4 @@
+using EcoTrack.Domain.Condicionantes;
 using EcoTrack.Domain.Licencas;
 
 namespace EcoTrack.Application.Common;
@@ -31,4 +32,32 @@ public sealed record LicencaDto(
     DateTime? DataProtocoloRenovacao,
     DateTime CreatedAtUtc,
     DateTime UpdatedAtUtc
+);
+
+public sealed record CondicionanteDto(
+    Guid Id,
+    Guid LicencaId,
+    string CodigoItem,
+    string Titulo,
+    string Descricao,
+    PeriodicidadeCondicionante Periodicidade,
+    DateTime DataVencimento,
+    string? ResponsavelTecnico,
+    StatusCondicionante Status,
+    NivelRiscoCondicionante NivelRisco,
+    int QuantidadeEvidencias,
+    DateTime CreatedAtUtc,
+    DateTime UpdatedAtUtc,
+    IReadOnlyList<EvidenciaCondicionanteDto> Evidencias
+);
+
+    public sealed record EvidenciaCondicionanteDto(
+    Guid Id,
+    Guid CondicionanteId,
+    string NomeOriginalArquivo,
+    string ContentType,
+    long TamanhoBytes,
+    string? NumeroArt,
+    string? Observacao,
+    DateTime DataUploadUtc
 );

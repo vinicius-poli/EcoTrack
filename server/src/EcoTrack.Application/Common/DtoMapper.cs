@@ -1,3 +1,4 @@
+using EcoTrack.Domain.Condicionantes;
 using EcoTrack.Domain.Empreendimentos;
 using EcoTrack.Domain.Licencas;
 
@@ -38,4 +39,42 @@ public static partial class DtoMapper
         licenca.CreatedAtUtc,
         licenca.UpdatedAtUtc
     );
+
+    public static EvidenciaCondicionanteDto ToDto(this EvidenciaCondicionante evidencia) =>
+        new(
+            evidencia.Id,
+            evidencia.CondicionanteId,
+            evidencia.NomeOriginalArquivo,
+            evidencia.ContentType,
+            evidencia.TamanhoBytes,
+            evidencia.NumeroArt,
+            evidencia.Observacao,
+            evidencia.DataUploadUtc
+        );
+
+    public static CondicionanteDto ToDto(this Condicionante condicionante)
+    {
+        var evidenciasDto = condicionante.Evidencias
+            .Select(e => e.ToDto())
+            .ToList();
+
+        return new CondicionanteDto(
+            condicionante.Id,
+            condicionante.LicencaId,
+            condicionante.CodigoItem,
+            condicionante.Titulo,
+            condicionante.Descricao,
+            condicionante.Periodicidade,
+            condicionante.DataVencimento,
+            condicionante.ResponsavelTecnico,
+            condicionante.Status,
+            condicionante.CalcularNivelRisco(),
+            evidenciasDto.Count,
+            condicionante.CreatedAtUtc,
+            condicionante.UpdatedAtUtc,
+            evidenciasDto
+        );
+    }
+
+    
 }

@@ -44,9 +44,12 @@ public sealed class EvidenciaCondicionante : Entity<EvidenciaCondicionante>
         else if (TamanhoBytes > TamanhoMaximoBytesPadrao)
             erros.Add("O arquivo excede o tamanho máximo permitido de 10 MB.");
 
-        var extensao = Path.GetExtension(NomeOriginalArquivo).ToLowerInvariant();
-        if (string.IsNullOrWhiteSpace(extensao) || !ExtensoesPermitidas.Contains(extensao))
-            erros.Add("Formato de arquivo não permitido. Use .pdf, .jpg, .jpeg, .png, .xlsx ou .docx.");
+        if (!string.IsNullOrWhiteSpace(NomeOriginalArquivo))
+{
+    var extensao = Path.GetExtension(NomeOriginalArquivo).ToLowerInvariant();
+    if (string.IsNullOrWhiteSpace(extensao) || !ExtensoesPermitidas.Contains(extensao))
+        erros.Add("Formato de arquivo não permitido. Use .pdf, .jpg, .jpeg, .png, .xlsx ou .docx.");
+}
 
         return erros;
     }
