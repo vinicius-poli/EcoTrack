@@ -5,6 +5,7 @@ using EcoTrack.Domain.Licencas;
 using EcoTrack.Infrastructure.Auth;
 using EcoTrack.Infrastructure.Persistence;
 using EcoTrack.Infrastructure.Persistence.Repositories;
+using EcoTrack.Infrastructure.Storage;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -28,11 +29,19 @@ public static class DependencyInjection
             })
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<EcoTrackDbContext>();
+        services
+            .AddOptions<EvidenciaStorageOptions>()
+            .BindConfiguration(EvidenciaStorageOptions.SectionName)
+            .Validate(
+                x => !string.IsNullOrWhiteSpace(x.BasePath),
+                "A configuração EvidenciaStorage:BasePath é obrigatória."
+            )
+    .ValidateOnStart();
 
         services.AddScoped<IEmpreendimentoRepository, EmpreendimentoRepository>();
         services.AddScoped<ILicencaRepository, LicencaRepository>();
         services.AddScoped<ICondicionanteRepository, CondicionanteRepository>();
-        //services.AddScoped<IEvidenciaStorageService, ...>();
+        services.AddScoped<IEvidenciaStorageService, LocalEvidenciaStorageService>();
         services.AddScoped<IGerenciadorIdentidade, GerenciadorIdentidade>();
         services.AddScoped<IEmissorTokens, JwtTokenGenerator>();
         services.AddScoped<IRevogacaoToken, RevogacaoTokenService>();
