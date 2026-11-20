@@ -1,5 +1,6 @@
 using EcoTrack.Domain.Auth;
 using EcoTrack.Domain.Empreendimentos;
+using EcoTrack.Domain.Licencas;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ public class EcoTrackDbContext : IdentityDbContext<EcoTrackUser, IdentityRole<Gu
     }
 
     public DbSet<Empreendimento> Empreendimentos => Set<Empreendimento>();
+    public DbSet<Licenca> Licencas => Set<Licenca>();
     public DbSet<TokenRevogado> TokensRevogados => Set<TokenRevogado>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,5 +28,6 @@ public class EcoTrackDbContext : IdentityDbContext<EcoTrackUser, IdentityRole<Gu
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(EcoTrackDbContext).Assembly);
 
         modelBuilder.Entity<Empreendimento>().HasQueryFilter(e => e.TenantId == _userContext.TenantId);
+        modelBuilder.Entity<Licenca>().HasQueryFilter(e => e.TenantId == _userContext.TenantId);
     }
 }

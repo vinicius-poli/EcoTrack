@@ -79,6 +79,73 @@ namespace EcoTrack.Infrastructure.Persistence.Migrations
                     b.ToTable("TBEmpreendimento", (string)null);
                 });
 
+            modelBuilder.Entity("EcoTrack.Domain.Licencas.Licenca", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataEmissao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DataProtocoloRenovacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataValidade")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DiasAntecedenciaRenovacao")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("EmpreendimentoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NumeroLicenca")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NumeroProcesso")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NumeroProtocoloRenovacao")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("OrgaoEmissor")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmpreendimentoId");
+
+                    b.HasIndex("NumeroLicenca");
+
+                    b.ToTable("TBLicenca", (string)null);
+                });
+
             modelBuilder.Entity("EcoTrack.Infrastructure.Persistence.EcoTrackUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -316,6 +383,17 @@ namespace EcoTrack.Infrastructure.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("EcoTrack.Domain.Licencas.Licenca", b =>
+                {
+                    b.HasOne("EcoTrack.Domain.Empreendimentos.Empreendimento", "Empreendimento")
+                        .WithMany()
+                        .HasForeignKey("EmpreendimentoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Empreendimento");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

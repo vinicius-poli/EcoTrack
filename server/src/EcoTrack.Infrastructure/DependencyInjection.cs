@@ -1,5 +1,6 @@
 using EcoTrack.Domain.Auth;
 using EcoTrack.Domain.Empreendimentos;
+using EcoTrack.Domain.Licencas;
 using EcoTrack.Infrastructure.Auth;
 using EcoTrack.Infrastructure.Persistence;
 using EcoTrack.Infrastructure.Persistence.Repositories;
@@ -28,6 +29,7 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<EcoTrackDbContext>();
 
         services.AddScoped<IEmpreendimentoRepository, EmpreendimentoRepository>();
+        services.AddScoped<ILicencaRepository, LicencaRepository>();
         services.AddScoped<IGerenciadorIdentidade, GerenciadorIdentidade>();
         services.AddScoped<IEmissorTokens, JwtTokenGenerator>();
         services.AddScoped<IRevogacaoToken, RevogacaoTokenService>();
