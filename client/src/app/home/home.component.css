@@ -1,0 +1,28 @@
+.home {
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.home__header {
+  margin-bottom: 2rem;
+}
+
+.home__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  display: block;
+  padding: 1.25rem;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card:hover {
+  border-color: #2f855a;
+}

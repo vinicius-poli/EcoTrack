@@ -1,0 +1,106 @@
+<main class="min-h-screen bg-[#F7F3EE] text-stone-800">
+  <!-- Faixa superior -->
+  <nav class="border-b border-[#E6DDD2] bg-[#FCF9F5]/90 backdrop-blur">
+    <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+      <div class="flex items-center gap-3">
+        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-sm font-bold text-white shadow-sm">
+          ET
+        </span>
+        <div>
+          <span class="text-lg font-semibold tracking-tight text-stone-900">EcoTrack</span>
+          <span class="ml-2 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800">
+            Conformidade Ambiental
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 text-sm font-medium text-stone-600">
+        <a routerLink="/empreendimentos" class="transition hover:text-emerald-700">Empreendimentos</a>
+        <a routerLink="/condicionantes" class="transition hover:text-sky-700">Condicionantes</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Conteúdo principal -->
+  <section class="mx-auto max-w-5xl px-6 py-12">
+    <!-- Cabeçalho de boas-vindas -->
+    <header class="mb-10 rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-8 shadow-sm">
+      <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-emerald-700">
+        Painel Central
+      </p>
+      <h1 class="text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
+        Gestão de empreendimentos, licenças e condicionantes
+      </h1>
+      <p class="mt-3 max-w-2xl text-base leading-relaxed text-stone-600">
+        Centralize o acompanhamento de obrigações ambientais, controle vencimentos e mantenha as evidências organizadas em um só lugar.
+      </p>
+    </header>
+
+    <!-- Cards de acesso rápido -->
+    <div class="grid gap-6 md:grid-cols-2">
+      <!-- Card Empreendimentos (Verde) -->
+      <a
+        routerLink="/empreendimentos"
+        class="group relative flex flex-col justify-between rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-7 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-600/60 hover:shadow-md"
+      >
+        <div>
+          <div class="mb-5 flex items-center justify-between">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800 transition group-hover:bg-emerald-700 group-hover:text-white">
+              <!-- Ícone folha / sustentabilidade -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 21c0-7 4-13 14-14-1 10-7 14-14 14Zm0 0 7-7" />
+              </svg>
+            </span>
+            <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800 border border-emerald-200">
+              Cadastro & Licenças
+            </span>
+          </div>
+
+          <h2 class="text-xl font-semibold text-stone-900 group-hover:text-emerald-800">
+            Empreendimentos
+          </h2>
+          <p class="mt-2 text-sm leading-relaxed text-stone-600">
+            Gerencie as unidades cadastradas, dados de localização e as licenças ambientais vinculadas a cada operação.
+          </p>
+        </div>
+
+        <div class="mt-6 flex items-center text-sm font-semibold text-emerald-700">
+          Acessar empreendimentos
+          <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
+        </div>
+      </a>
+
+      <!-- Card Condicionantes (Azul) -->
+      <a
+        routerLink="/condicionantes"
+        class="group relative flex flex-col justify-between rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-7 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-600/60 hover:shadow-md"
+      >
+        <div>
+          <div class="mb-5 flex items-center justify-between">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-sky-100 text-sky-800 transition group-hover:bg-sky-700 group-hover:text-white">
+              <!-- Ícone checklist / evidência -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </span>
+            <span class="rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-800 border border-sky-200">
+              Prazos & Evidências
+            </span>
+          </div>
+
+          <h2 class="text-xl font-semibold text-stone-900 group-hover:text-sky-800">
+            Condicionantes
+          </h2>
+          <p class="mt-2 text-sm leading-relaxed text-stone-600">
+            Acompanhe prazos de entrega, monitore status de atendimento e anexe evidências técnicas de cumprimento.
+          </p>
+        </div>
+
+        <div class="mt-6 flex items-center text-sm font-semibold text-sky-700">
+          Acessar condicionantes
+          <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+</main>
