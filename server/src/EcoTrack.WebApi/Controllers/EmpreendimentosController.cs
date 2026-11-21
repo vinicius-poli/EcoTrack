@@ -1,11 +1,13 @@
 using EcoTrack.Application.Empreendimentos;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcoTrack.WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+
 public class EmpreendimentosController : ControllerBase
 {
     private readonly IMediator _mediator;

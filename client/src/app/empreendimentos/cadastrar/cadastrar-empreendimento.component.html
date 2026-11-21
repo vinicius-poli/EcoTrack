@@ -1,0 +1,195 @@
+<main class="min-h-screen bg-[#F7F3EE] text-stone-800">
+  <nav class="border-b border-[#E6DDD2] bg-[#FCF9F5]/90 backdrop-blur">
+    <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+      <a routerLink="/home" class="flex items-center gap-3">
+        <img
+          src="/logo-ecotrack-grande.png"
+          alt="EcoTrack"
+          class="h-12 w-auto object-contain"
+        />
+      </a>
+
+      <div class="flex items-center gap-6 text-base font-medium text-stone-600">
+        <a routerLink="/empreendimentos" class="font-semibold text-emerald-700">Empreendimentos</a>
+        <a routerLink="/condicionantes" class="transition hover:text-sky-700">Condicionantes</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="mx-auto max-w-3xl px-6 py-10">
+    <div class="mb-6">
+      <a
+        routerLink="/empreendimentos"
+        class="text-sm font-medium text-emerald-700 transition hover:text-emerald-800"
+      >
+        ← Voltar para listagem
+      </a>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-stone-900">
+        Novo Empreendimento
+      </h1>
+      <p class="mt-1 text-sm text-stone-600">
+        Preencha os dados cadastrais da unidade para vincular licenças e condicionantes.
+      </p>
+    </div>
+
+    <form
+      (submit)="cadastrarEmpreendimento($event)"
+      novalidate
+      class="space-y-5 rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-7 shadow-sm"
+    >
+      <div>
+        <label for="razaoSocial" class="mb-1.5 block text-sm font-medium text-stone-700">
+          Razão Social
+        </label>
+        <input
+          id="razaoSocial"
+          type="text"
+          [formField]="formularioEmpreendimento.razaoSocial"
+          placeholder="Ex.: Papel e Celulose Serra Catarinense Ltda"
+          class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+        />
+        @if (
+          formularioEmpreendimento.razaoSocial().touched() &&
+          formularioEmpreendimento.razaoSocial().invalid()
+        ) {
+          @for (erro of formularioEmpreendimento.razaoSocial().errors(); track erro.message) {
+            <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+          }
+        }
+      </div>
+
+      <div>
+        <label for="nomeFantasia" class="mb-1.5 block text-sm font-medium text-stone-700">
+          Nome Fantasia
+        </label>
+        <input
+          id="nomeFantasia"
+          type="text"
+          [formField]="formularioEmpreendimento.nomeFantasia"
+          placeholder="Ex.: Unidade Serra Catarinense"
+          class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+        />
+        @if (
+          formularioEmpreendimento.nomeFantasia().touched() &&
+          formularioEmpreendimento.nomeFantasia().invalid()
+        ) {
+          @for (erro of formularioEmpreendimento.nomeFantasia().errors(); track erro.message) {
+            <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+          }
+        }
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-3">
+        <div>
+          <label for="cnpj" class="mb-1.5 block text-sm font-medium text-stone-700">
+            CNPJ
+          </label>
+          <input
+            id="cnpj"
+            type="text"
+            [formField]="formularioEmpreendimento.cnpj"
+            placeholder="00.000.000/0000-00"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+          @if (formularioEmpreendimento.cnpj().touched() && formularioEmpreendimento.cnpj().invalid()) {
+            @for (erro of formularioEmpreendimento.cnpj().errors(); track erro.message) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+
+        <div>
+          <label for="municipio" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Município
+          </label>
+          <input
+            id="municipio"
+            type="text"
+            [formField]="formularioEmpreendimento.municipio"
+            placeholder="Ex.: Lages"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+          @if (
+            formularioEmpreendimento.municipio().touched() &&
+            formularioEmpreendimento.municipio().invalid()
+          ) {
+            @for (erro of formularioEmpreendimento.municipio().errors(); track erro.message) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+
+        <div>
+          <label for="uf" class="mb-1.5 block text-sm font-medium text-stone-700">
+            UF
+          </label>
+          <input
+            id="uf"
+            type="text"
+            [formField]="formularioEmpreendimento.uf"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm uppercase text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+          @if (formularioEmpreendimento.uf().touched() && formularioEmpreendimento.uf().invalid()) {
+            @for (erro of formularioEmpreendimento.uf().errors(); track erro.message) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label for="porte" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Porte
+          </label>
+          <select
+            id="porte"
+            [formField]="formularioEmpreendimento.porte"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          >
+            <option [value]="1">Micro / Pequeno</option>
+            <option [value]="2">Médio</option>
+            <option [value]="3">Grande</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="statusLicenciamento" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Status do Licenciamento
+          </label>
+          <select
+            id="statusLicenciamento"
+            [formField]="formularioEmpreendimento.statusLicenciamento"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          >
+            <option [value]="1">Regular</option>
+            <option [value]="2">Pendente</option>
+            <option [value]="3">Vencido</option>
+          </select>
+        </div>
+      </div>
+
+      @if (mensagemErro()) {
+        <div class="whitespace-pre-line rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {{ mensagemErro() }}
+        </div>
+      }
+
+      <div class="flex items-center justify-end gap-3 pt-3">
+        <a
+          routerLink="/empreendimentos"
+          class="rounded-xl border border-[#E6DDD2] px-5 py-2.5 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
+        >
+          Cancelar
+        </a>
+        <button
+          type="submit"
+          [disabled]="enviandoFormulario()"
+          class="rounded-xl bg-emerald-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {{ enviandoFormulario() ? 'Salvando...' : 'Salvar Empreendimento' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</main>
