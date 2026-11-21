@@ -76,6 +76,8 @@ public class CondicionanteRepository : ICondicionanteRepository
     {
         return await _context.Condicionantes
             .AsNoTracking()
+            .Include(c => c.Evidencias)
+            .AsSplitQuery()
             .ToListAsync(cancellationToken);
     }
 
@@ -83,6 +85,8 @@ public class CondicionanteRepository : ICondicionanteRepository
     {
         return await _context.Condicionantes
             .AsNoTracking()
+            .Include(c => c.Evidencias)
+            .AsSplitQuery()
             .Where(c => c.LicencaId == licencaId)
             .ToListAsync(cancellationToken);
     }
