@@ -23,7 +23,7 @@ public sealed class AutenticarUsuarioCommandHandler(
                 Erros.Criar("E-mail e senha são obrigatórios.", "credenciais"));
         }
 
-        CredenciaisUsuario? credenciais = await identidade.AutenticarAsync(command.Email, command.Senha, ct); //Não pode ser aqui o problema?
+        CredenciaisUsuario? credenciais = await identidade.AutenticarAsync(command.Email, command.Senha, ct);
         if (credenciais is null)
         {
             return Result.Fail<TokenDto>(Erros.Criar("Credenciais inválidas.", "Autenticação"));
