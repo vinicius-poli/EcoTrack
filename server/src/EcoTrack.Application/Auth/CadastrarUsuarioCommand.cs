@@ -5,10 +5,11 @@ using MediatR;
 
 namespace EcoTrack.Application.Auth;
 
-public sealed record CadastrarUsuarioCommand(string? Nome, 
-    string? Email, 
-    string? Senha, 
-    string? Perfil, 
+public sealed record CadastrarUsuarioCommand(
+    string? Nome,
+    string? Email,
+    string? Senha,
+    string? Perfil,
     Guid? TenantId)
     : IRequest<Result<UsuarioDto>>;
 
@@ -42,9 +43,17 @@ public sealed class CadastrarUsuarioCommandHandler(IGerenciadorIdentidade identi
                 "senha"));
         }
 
-        if (string.IsNullOrWhiteSpace(command.Perfil))
+        string? perfilNormalizado = null;
+
+        if (string.IsNullOrWhiteSpace(command.Perfil)
+            || !Enum.TryParse<PerfilUsuario>(command.Perfil.Trim(), ignoreCase: true, out var perfilEnum)
+            || !Enum.IsDefined(perfilEnum))
         {
-            erros.Add(Erros.Criar("Perfil é obrigatório.", "perfil"));
+            erros.Add(Erros.Criar("Perfil inválido ou não informado.", "perfil"));
+        }
+        else
+        {
+            perfilNormalizado = perfilEnum.ToString();
         }
 
         if (erros.Count > 0)
@@ -52,20 +61,18 @@ public sealed class CadastrarUsuarioCommandHandler(IGerenciadorIdentidade identi
             return Result.Fail<UsuarioDto>(erros);
         }
 
-        // Se o TenantId não foi passado no comando, definimos um padrão (ou criamos um novo tenant para o usuário)
         var tenantId = command.TenantId ?? Guid.NewGuid();
 
         try
         {
             var usuarioDomain = await identidade.CadastrarAsync(
                 tenantId,
-                command.Nome!,
-                command.Email!,
+                command.Nome!.Trim(),
+                command.Email!.Trim(),
                 command.Senha!,
-                command.Perfil!,
+                perfilNormalizado!,
                 ct);
 
-            // Mapeando do DTO de Domínio para o DTO de Aplicação
             var usuarioDto = new UsuarioDto(
                 usuarioDomain.Id,
                 usuarioDomain.Nome,

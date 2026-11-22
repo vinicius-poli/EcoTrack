@@ -2,6 +2,8 @@ export interface CadastroRequest {
   readonly nome: string;
   readonly email: string;
   readonly senha: string;
+  readonly perfil: string;
+  readonly tenantId?: string | null;
 }
 
 export interface CadastroConcluidoNavigationState {
@@ -12,6 +14,8 @@ export interface UsuarioDto {
   readonly id: string;
   readonly nome: string;
   readonly email: string;
+  readonly perfil: string;
+  readonly tenantId: string;
 }
 
 export interface LoginRequest {

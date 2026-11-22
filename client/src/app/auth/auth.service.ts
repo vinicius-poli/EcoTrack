@@ -30,9 +30,9 @@ export class AuthService {
     );
   }
 
-  public registrar(payload: CadastroRequest): Observable<UsuarioDto> {
-    return this.http.post<UsuarioDto>(`${AUTH_API_URL}/registrar`, payload);
-  }
+  public cadastrar(payload: CadastroRequest): Observable<UsuarioDto> {
+  return this.http.post<UsuarioDto>(`${AUTH_API_URL}/registrar`, payload);
+}
 
   public logout(): void {
     this.sessaoSignal.set(null);

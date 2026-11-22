@@ -1,0 +1,141 @@
+<main class="flex min-h-screen items-center justify-center bg-[#F7F3EE] px-6 py-12 text-stone-800">
+  <div class="w-full max-w-md rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-8 shadow-sm">
+    <div class="mb-6 flex flex-col items-center text-center">
+      <a routerLink="/home" class="mb-4 inline-flex items-center gap-3">
+        <img
+          src="/logo-ecotrack-grande.png"
+          alt="EcoTrack"
+          class="h-12 w-auto object-contain"
+        />
+      </a>
+
+      <h1
+        #tituloPagina
+        tabindex="-1"
+        class="text-2xl font-bold tracking-tight text-stone-900 outline-none"
+      >
+        Criar conta
+      </h1>
+      <p class="mt-1 text-sm text-stone-600">
+        Cadastre-se para acessar o EcoTrack.
+      </p>
+    </div>
+
+    @if (mensagemErro()) {
+      <div
+        class="mb-5 whitespace-pre-line rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+      >
+        {{ mensagemErro() }}
+      </div>
+    }
+
+    <form (submit)="enviarFormulario($event)" novalidate class="space-y-5">
+      <div>
+        <label for="nome" class="mb-1.5 block text-sm font-medium text-stone-700">
+          Nome
+        </label>
+        <input
+          id="nome"
+          type="text"
+          autocomplete="name"
+          [formField]="formularioCadastro.nome"
+          placeholder="Seu nome"
+          class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 placeholder-stone-400 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+        />
+        @if (formularioCadastro.nome().touched() && formularioCadastro.nome().invalid()) {
+          @for (erro of formularioCadastro.nome().errors(); track erro.message) {
+            <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+          }
+        }
+      </div>
+
+      <div>
+        <label for="email" class="mb-1.5 block text-sm font-medium text-stone-700">
+          E-mail
+        </label>
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          [formField]="formularioCadastro.email"
+          placeholder="voce@empresa.com.br"
+          class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 placeholder-stone-400 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+        />
+        @if (formularioCadastro.email().touched() && formularioCadastro.email().invalid()) {
+          @for (erro of formularioCadastro.email().errors(); track erro.message) {
+            <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+          }
+        }
+      </div>
+
+      <div>
+        <label for="senha" class="mb-1.5 block text-sm font-medium text-stone-700">
+          Senha
+        </label>
+        <input
+          id="senha"
+          type="password"
+          autocomplete="new-password"
+          [formField]="formularioCadastro.senha"
+          placeholder="Mínimo 8 caracteres, número e símbolo"
+          class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 placeholder-stone-400 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+        />
+        @if (formularioCadastro.senha().touched() && formularioCadastro.senha().invalid()) {
+          @for (erro of formularioCadastro.senha().errors(); track erro.message) {
+            <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+          }
+        }
+      </div>
+
+      <div>
+        <label for="perfil" class="mb-1.5 block text-sm font-medium text-stone-700">
+          Perfil
+        </label>
+        <select
+          id="perfil"
+          [formField]="formularioCadastro.perfil"
+          class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+        >
+          <option value="">Selecione um perfil</option>
+          <option value="Analista">Analista</option>
+          <option value="Gestor">Gestor</option>
+          <option value="Administrador">Administrador</option>
+        </select>
+        @if (formularioCadastro.perfil().touched() && formularioCadastro.perfil().invalid()) {
+          @for (erro of formularioCadastro.perfil().errors(); track erro.message) {
+            <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+          }
+        }
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="enviandoFormulario()"
+        class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        <span>{{ enviandoFormulario() ? 'Criando conta...' : 'Criar conta' }}</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-4 w-4"
+          aria-hidden="true"
+        >
+          <path d="M5 12h14" />
+          <path d="m12 5 7 7-7 7" />
+        </svg>
+      </button>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-stone-600">
+      Já tem uma conta?
+      <a routerLink="/login" class="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline">
+        Entrar
+      </a>
+    </p>
+  </div>
+</main>
