@@ -22,7 +22,6 @@ interface CadastroFormModel {
   readonly nome: string;
   readonly email: string;
   readonly senha: string;
-  readonly perfil: string;
 }
 
 @Component({
@@ -40,7 +39,6 @@ export class Cadastro {
     nome: '',
     email: '',
     senha: '',
-    perfil: ''
   });
 
   protected readonly formularioCadastro = form(this.modeloFormulario, (modelo) => {
@@ -55,7 +53,6 @@ export class Cadastro {
     pattern(modelo.senha, /(?=.*\d)(?=.*[^a-zA-Z0-9]).+/, {
       message: 'Inclua pelo menos um número e um caractere especial.',
     });
-    required(modelo.perfil, { message: 'Selecione um perfil.' });
   });
 
   protected readonly mensagemErro = signal('');
@@ -77,7 +74,7 @@ export class Cadastro {
       nome: this.modeloFormulario().nome.trim(),
       email: this.modeloFormulario().email.trim(),
       senha: this.modeloFormulario().senha,
-      perfil: 'Administrador'
+      perfil: 'Administrador',
     };
 
     this.mensagemErro.set('');

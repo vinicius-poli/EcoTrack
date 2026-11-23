@@ -1,6 +1,7 @@
+import { AuthService } from '../../auth/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { EmpreendimentoDto } from '../empreendimento.models';
 import { EmpreendimentoService } from '../empreendimento.service';
 
@@ -15,7 +16,8 @@ interface ApiValidationProblemDetails {
 })
 export class ListarEmpreendimentosComponent {
   private readonly empreendimentoService = inject(EmpreendimentoService);
-
+  private readonly router = inject(Router);
+  protected readonly authService = inject(AuthService);
   protected readonly empreendimentos = signal<readonly EmpreendimentoDto[]>([]);
   protected readonly carregando = signal(true);
   protected readonly mensagemErro = signal('');
@@ -41,6 +43,11 @@ export class ListarEmpreendimentosComponent {
   protected atualizarBusca(evento: Event): void {
     const input = evento.target as HTMLInputElement;
     this.termoBusca.set(input.value);
+  }
+
+  protected navegarParaCadastro(): void {
+    if (!this.authService.podeEscrever()) return;
+    void this.router.navigate(['/empreendimentos/cadastrar']);
   }
 
   private carregarEmpreendimentos(): void {

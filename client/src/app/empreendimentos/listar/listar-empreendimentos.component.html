@@ -27,12 +27,15 @@
         </h1>
       </div>
 
-      <a
-        routerLink="/empreendimentos/cadastrar"
-        class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800"
+      <button
+        type="button"
+        [disabled]="!authService.podeEscrever()"
+        [title]="authService.podeEscrever() ? 'Cadastrar novo empreendimento' : 'Apenas Gestor ou Administrador podem cadastrar'"
+        (click)="navegarParaCadastro()"
+        class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-emerald-700"
       >
         <span>+ Novo Empreendimento</span>
-      </a>
+      </button>
     </div>
 
     <div class="mb-6">
@@ -87,6 +90,19 @@
               >
                 Detalhes
               </a>
+
+              <!-- Exemplo caso tenha ação de excluir na listagem -->
+              <!--
+              <button
+                type="button"
+                [disabled]="!authService.podeExcluir()"
+                [title]="authService.podeExcluir() ? 'Excluir empreendimento' : 'Apenas Administrador pode excluir'"
+                (click)="excluirEmpreendimento(item.id)"
+                class="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-red-50 disabled:hover:text-red-700"
+              >
+                Excluir
+              </button>
+              -->
             </div>
           </article>
         }

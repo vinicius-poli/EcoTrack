@@ -6,11 +6,20 @@ import { ListarEmpreendimentosComponent } from './empreendimentos/listar/listar-
 import { Login } from './auth/login/login';
 import { Cadastro } from './auth/cadastro/cadastro';
 
+
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: Login },
   { path: 'cadastro', component: Cadastro },
+  {
+  path: 'equipe/novo-membro',
+  canActivate: [authGuard],
+  loadComponent: () =>
+    import('./auth/cadastro/cadastrar-membro.component').then(
+      (m) => m.CadastrarMembroComponent,
+    ),
+  },
   {
     path: 'empreendimentos',
     component: ListarEmpreendimentosComponent,

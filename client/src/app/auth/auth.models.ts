@@ -1,9 +1,20 @@
+export type PerfilUsuario = 'Administrador' | 'Gestor' | 'Analista';
+
+export type PerfilMembroTenant = 'Gestor' | 'Analista';
+
 export interface CadastroRequest {
   readonly nome: string;
   readonly email: string;
   readonly senha: string;
-  readonly perfil: string;
+  readonly perfil?: string;
   readonly tenantId?: string | null;
+}
+
+export interface CadastrarMembroRequest {
+  readonly nome: string;
+  readonly email: string;
+  readonly senha: string;
+  readonly perfil: PerfilMembroTenant | '';
 }
 
 export interface CadastroConcluidoNavigationState {
@@ -14,7 +25,7 @@ export interface UsuarioDto {
   readonly id: string;
   readonly nome: string;
   readonly email: string;
-  readonly perfil: string;
+  readonly perfil: PerfilUsuario | string;
   readonly tenantId: string;
 }
 
