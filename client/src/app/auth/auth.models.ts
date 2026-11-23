@@ -24,7 +24,8 @@ export interface LoginRequest {
 }
 
 export interface TokenDto {
-  readonly token: string;
+  readonly token?: string;
+  readonly accessToken?: string;
 }
 
 export interface SessaoAutenticada {

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { catchError, EMPTY, finalize, Observable, tap } from 'rxjs';
 import {
   CadastroRequest,
   LoginRequest,
@@ -25,16 +25,28 @@ export class AuthService {
   public login(payload: LoginRequest): Observable<TokenDto> {
     return this.http.post<TokenDto>(`${AUTH_API_URL}/login`, payload).pipe(
       tap((resposta) => {
-        this.salvarSessao({ token: resposta.token });
+        const jwt = resposta.token ?? resposta.accessToken;
+        if (jwt) {
+          this.salvarSessao({ token: jwt });
+        }
       }),
     );
   }
 
   public cadastrar(payload: CadastroRequest): Observable<UsuarioDto> {
-  return this.http.post<UsuarioDto>(`${AUTH_API_URL}/registrar`, payload);
-}
+    return this.http.post<UsuarioDto>(`${AUTH_API_URL}/registrar`, payload);
+  }
 
-  public logout(): void {
+  public logout(): Observable<void> {
+    return this.http.post<void>(`${AUTH_API_URL}/logout`, {}).pipe(
+      catchError(() => EMPTY),
+      finalize(() => {
+        this.limparSessaoLocal();
+      }),
+    );
+  }
+
+  public limparSessaoLocal(): void {
     this.sessaoSignal.set(null);
 
     try {

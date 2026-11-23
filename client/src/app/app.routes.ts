@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './auth/auth.guard';
 import { HomeComponent } from './home/home.component';
 import { CadastrarEmpreendimentoComponent } from './empreendimentos/cadastrar/cadastrar-empreendimento.component';
 import { ListarEmpreendimentosComponent } from './empreendimentos/listar/listar-empreendimentos.component';
@@ -10,8 +11,16 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: Login },
   { path: 'cadastro', component: Cadastro },
-  { path: 'empreendimentos', component: ListarEmpreendimentosComponent },
-  { path: 'empreendimentos/cadastrar', component: CadastrarEmpreendimentoComponent },
-  // { path: 'condicionantes', ... },
+  {
+    path: 'empreendimentos',
+    component: ListarEmpreendimentosComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'empreendimentos/cadastrar',
+    component: CadastrarEmpreendimentoComponent,
+    canActivate: [authGuard],
+  },
+  // { path: 'condicionantes', canActivate: [authGuard], ... },
   { path: '**', redirectTo: 'home' }
 ];
