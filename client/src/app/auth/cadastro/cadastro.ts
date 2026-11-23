@@ -20,6 +20,7 @@ import { AuthService } from '../auth.service';
 
 interface CadastroFormModel {
   readonly nome: string;
+  readonly nomeOrganizacao: string;
   readonly email: string;
   readonly senha: string;
 }
@@ -37,6 +38,7 @@ export class Cadastro {
 
   protected readonly modeloFormulario = signal<CadastroFormModel>({
     nome: '',
+    nomeOrganizacao: '',
     email: '',
     senha: '',
   });
@@ -45,6 +47,10 @@ export class Cadastro {
     required(modelo.nome, { message: 'Informe seu nome.' });
     pattern(modelo.nome, /\S/, {
       message: 'O nome não pode conter apenas espaços.',
+    });
+    required(modelo.nomeOrganizacao, { message: 'Informe o nome da organização.' });
+    pattern(modelo.nomeOrganizacao, /\S/, {
+      message: 'O nome da organização não pode conter apenas espaços.',
     });
     required(modelo.email, { message: 'Informe seu email.' });
     email(modelo.email, { message: 'Informe um email válido.' });
@@ -72,6 +78,7 @@ export class Cadastro {
 
     const request: CadastroRequest = {
       nome: this.modeloFormulario().nome.trim(),
+      nomeOrganizacao: this.modeloFormulario().nomeOrganizacao.trim(),
       email: this.modeloFormulario().email.trim(),
       senha: this.modeloFormulario().senha,
       perfil: 'Administrador',

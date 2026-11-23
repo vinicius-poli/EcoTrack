@@ -20,7 +20,8 @@ public sealed record CadastrarMembroTenantCommand(
 
 public sealed class CadastrarMembroTenantCommandHandler(
     IGerenciadorIdentidade identidade,
-    IUserContext userContext)
+    IUserContext userContext,
+    IOrganizacaoRepository organizacaoRepository)
     : IRequestHandler<CadastrarMembroTenantCommand, Result<UsuarioDto>>
 {
     public async Task<Result<UsuarioDto>> Handle(CadastrarMembroTenantCommand command, CancellationToken ct)
@@ -83,12 +84,15 @@ public sealed class CadastrarMembroTenantCommandHandler(
                 perfilNormalizado!,
                 ct);
 
+            var organizacao = await organizacaoRepository.ObterPorIdAsync(tenantId, ct);
+
             return Result.Ok(new UsuarioDto(
                 usuarioCriado.Id,
+                usuarioCriado.TenantId,
                 usuarioCriado.Nome,
                 usuarioCriado.Email,
                 usuarioCriado.Perfil,
-                usuarioCriado.TenantId));
+                organizacao?.Nome));
         }
         catch (InvalidOperationException ex) when (ex.Message == "EMAIL_DUPLICADO")
         {

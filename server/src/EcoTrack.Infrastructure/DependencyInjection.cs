@@ -38,6 +38,7 @@ public static class DependencyInjection
             )
     .ValidateOnStart();
 
+        services.AddScoped<IOrganizacaoRepository, OrganizacaoRepository>();
         services.AddScoped<IEmpreendimentoRepository, EmpreendimentoRepository>();
         services.AddScoped<ILicencaRepository, LicencaRepository>();
         services.AddScoped<ICondicionanteRepository, CondicionanteRepository>();

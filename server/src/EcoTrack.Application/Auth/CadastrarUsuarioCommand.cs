@@ -8,12 +8,21 @@ namespace EcoTrack.Application.Auth;
 public sealed record CadastrarUsuarioCommand(
     string? Nome,
     string? Email,
-    string? Senha)
+    string? Senha,
+    string? NomeOrganizacao)
     : IRequest<Result<UsuarioDto>>;
 
-public sealed record UsuarioDto(Guid Id, string Nome, string Email, string Perfil, Guid TenantId);
+public sealed record UsuarioDto(
+    Guid Id,
+    Guid TenantId,
+    string Nome,
+    string Email,
+    string Perfil,
+    string? NomeOrganizacao = null);
 
-public sealed class CadastrarUsuarioCommandHandler(IGerenciadorIdentidade identidade)
+public sealed class CadastrarUsuarioCommandHandler(
+    IGerenciadorIdentidade identidade,
+    IOrganizacaoRepository organizacaoRepository)
     : IRequestHandler<CadastrarUsuarioCommand, Result<UsuarioDto>>
 {
     public async Task<Result<UsuarioDto>> Handle(CadastrarUsuarioCommand command, CancellationToken ct)
@@ -23,6 +32,11 @@ public sealed class CadastrarUsuarioCommandHandler(IGerenciadorIdentidade identi
         if (string.IsNullOrWhiteSpace(command.Nome))
         {
             erros.Add(Erros.Criar("Nome é obrigatório.", "nome"));
+        }
+
+        if (string.IsNullOrWhiteSpace(command.NomeOrganizacao))
+        {
+            erros.Add(Erros.Criar("Nome da organização é obrigatório.", "nomeOrganizacao"));
         }
 
         if (string.IsNullOrWhiteSpace(command.Email)
@@ -47,10 +61,14 @@ public sealed class CadastrarUsuarioCommandHandler(IGerenciadorIdentidade identi
         }
 
         var tenantId = Guid.CreateVersion7();
+        var nomeOrganizacaoLimpo = command.NomeOrganizacao!.Trim();
         const string perfilInicial = nameof(PerfilUsuario.Administrador);
 
         try
         {
+            var organizacao = new Organizacao(tenantId, nomeOrganizacaoLimpo, DateTime.UtcNow);
+            await organizacaoRepository.AdicionarAsync(organizacao, ct);
+
             var usuarioDomain = await identidade.CadastrarAsync(
                 tenantId,
                 command.Nome!.Trim(),
@@ -61,10 +79,11 @@ public sealed class CadastrarUsuarioCommandHandler(IGerenciadorIdentidade identi
 
             var usuarioDto = new UsuarioDto(
                 usuarioDomain.Id,
+                usuarioDomain.TenantId,
                 usuarioDomain.Nome,
                 usuarioDomain.Email,
                 usuarioDomain.Perfil,
-                usuarioDomain.TenantId
+                organizacao.Nome
             );
 
             return Result.Ok(usuarioDto);

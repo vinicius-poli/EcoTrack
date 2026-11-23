@@ -7,7 +7,9 @@ namespace EcoTrack.Application.Auth;
 
 public sealed record ObterUsuarioQuery(Guid UsuarioId) : IRequest<Result<UsuarioDto>>;
 
-public sealed class ObterUsuarioQueryHandler(IGerenciadorIdentidade identidade)
+public sealed class ObterUsuarioQueryHandler(
+    IGerenciadorIdentidade identidade,
+    IOrganizacaoRepository organizacaoRepository)
     : IRequestHandler<ObterUsuarioQuery, Result<UsuarioDto>>
 {
     public async Task<Result<UsuarioDto>> Handle(ObterUsuarioQuery query, CancellationToken ct)
@@ -18,13 +20,16 @@ public sealed class ObterUsuarioQueryHandler(IGerenciadorIdentidade identidade)
             return Result.Fail<UsuarioDto>(Erros.Criar("Usuário não encontrado.", "usuario"));
         }
 
+        var organizacao = await organizacaoRepository.ObterPorIdAsync(usuarioDomain.TenantId, ct);
+
         // Mapeando do DTO de Domínio para o DTO de Aplicação
         var usuarioDto = new UsuarioDto(
             usuarioDomain.Id,
+            usuarioDomain.TenantId,
             usuarioDomain.Nome,
             usuarioDomain.Email,
             usuarioDomain.Perfil,
-            usuarioDomain.TenantId
+            organizacao?.Nome
         );
 
         return Result.Ok(usuarioDto);

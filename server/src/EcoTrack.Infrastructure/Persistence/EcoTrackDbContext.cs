@@ -18,6 +18,7 @@ public class EcoTrackDbContext : IdentityDbContext<EcoTrackUser, IdentityRole<Gu
         _userContext = userContext;
     }
 
+    public DbSet<Organizacao> Organizacoes => Set<Organizacao>();
     public DbSet<Empreendimento> Empreendimentos => Set<Empreendimento>();
     public DbSet<Licenca> Licencas => Set<Licenca>();
     public DbSet<Condicionante> Condicionantes => Set<Condicionante>();

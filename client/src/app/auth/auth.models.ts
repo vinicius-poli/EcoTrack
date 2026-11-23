@@ -4,6 +4,7 @@ export type PerfilMembroTenant = 'Gestor' | 'Analista';
 
 export interface CadastroRequest {
   readonly nome: string;
+  readonly nomeOrganizacao: string;
   readonly email: string;
   readonly senha: string;
   readonly perfil?: string;
@@ -23,10 +24,11 @@ export interface CadastroConcluidoNavigationState {
 
 export interface UsuarioDto {
   readonly id: string;
+  readonly tenantId: string;
   readonly nome: string;
   readonly email: string;
   readonly perfil: PerfilUsuario | string;
-  readonly tenantId: string;
+  readonly nomeOrganizacao?: string | null;
 }
 
 export interface LoginRequest {
