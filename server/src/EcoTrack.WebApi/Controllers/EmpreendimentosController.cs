@@ -1,4 +1,5 @@
 using EcoTrack.Application.Empreendimentos;
+using EcoTrack.Domain.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,9 +8,15 @@ namespace EcoTrack.WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-
+[Authorize]
 public class EmpreendimentosController : ControllerBase
 {
+    private const string PerfisEscrita =
+        $"{nameof(PerfilUsuario.Gestor)},{nameof(PerfilUsuario.Administrador)}";
+
+    private const string PerfilExclusao =
+        nameof(PerfilUsuario.Administrador);
+
     private readonly IMediator _mediator;
 
     public EmpreendimentosController(IMediator mediator)
@@ -37,7 +44,6 @@ public class EmpreendimentosController : ControllerBase
 
         if (resultado.IsFailed)
         {
-            // Se o erro for de não encontrado, retorna 404
             if (resultado.Errors.Any(e => e.Message.Contains("não encontrado", StringComparison.OrdinalIgnoreCase)))
                 return NotFound(resultado.Errors);
 
@@ -48,6 +54,7 @@ public class EmpreendimentosController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = PerfisEscrita)]
     public async Task<IActionResult> Criar([FromBody] CriarEmpreendimentoRequest request, CancellationToken cancellationToken)
     {
         var command = new CriarEmpreendimentoCommand(request);
@@ -60,6 +67,7 @@ public class EmpreendimentosController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = PerfisEscrita)]
     public async Task<IActionResult> Atualizar(Guid id, [FromBody] AtualizarEmpreendimentoRequest request, CancellationToken cancellationToken)
     {
         var command = new AtualizarEmpreendimentoCommand(id, request);
@@ -77,6 +85,7 @@ public class EmpreendimentosController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = PerfilExclusao)]
     public async Task<IActionResult> Excluir(Guid id, CancellationToken cancellationToken)
     {
         var command = new ExcluirEmpreendimentoCommand(id);

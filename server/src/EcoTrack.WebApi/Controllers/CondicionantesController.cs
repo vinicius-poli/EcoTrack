@@ -1,5 +1,6 @@
 using EcoTrack.Application.Common;
 using EcoTrack.Application.Condicionantes;
+using EcoTrack.Domain.Auth;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,12 @@ namespace EcoTrack.WebApi.Controllers;
 [Route("api/[controller]")]
 public sealed class CondicionantesController : ControllerBase
 {
+    private const string PerfisEscrita =
+        $"{nameof(PerfilUsuario.Gestor)},{nameof(PerfilUsuario.Administrador)}";
+
+    private const string PerfilExclusao =
+        nameof(PerfilUsuario.Administrador);
+
     private readonly IMediator _mediator;
 
     public CondicionantesController(IMediator mediator)
@@ -55,8 +62,10 @@ public sealed class CondicionantesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = PerfisEscrita)]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Criar(
         [FromBody] CriarCondicionanteRequest request,
         CancellationToken cancellationToken)
@@ -72,8 +81,10 @@ public sealed class CondicionantesController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = PerfisEscrita)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Atualizar(
         Guid id,
         [FromBody] AtualizarCondicionanteRequest request,
@@ -87,8 +98,10 @@ public sealed class CondicionantesController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = PerfilExclusao)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Excluir(Guid id, CancellationToken cancellationToken)
     {
         var resultado = await _mediator.Send(new ExcluirCondicionanteCommand(id), cancellationToken);
@@ -107,9 +120,11 @@ public sealed class CondicionantesController : ControllerBase
     // =========================================================================
 
     [HttpPost("{condicionanteId:guid}/evidencias")]
+    [Authorize(Roles = PerfisEscrita)]
     [Consumes("multipart/form-data")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> AnexarEvidencia(
         Guid condicionanteId,
         [FromForm] AnexarEvidenciaFormRequest form,
@@ -164,8 +179,10 @@ public sealed class CondicionantesController : ControllerBase
     }
 
     [HttpDelete("{condicionanteId:guid}/evidencias/{evidenciaId:guid}")]
+    [Authorize(Roles = PerfilExclusao)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> RemoverEvidencia(
         Guid condicionanteId,
         Guid evidenciaId,

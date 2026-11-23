@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using EcoTrack.Application.Auth;
+using EcoTrack.Domain.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,33 @@ public class AuthController(IMediator mediator) : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Registrar([FromBody] CadastrarUsuarioCommand command, CancellationToken ct)
     {
+        var resultado = await mediator.Send(command, ct);
+
+        if (resultado.IsFailed)
+        {
+            var ehConflitoEmail = resultado.Errors.Any(e =>
+                e.Message.Contains("já está cadastrado", StringComparison.OrdinalIgnoreCase));
+
+            return ehConflitoEmail
+                ? Conflict(resultado.Errors)
+                : BadRequest(resultado.Errors);
+        }
+
+        return CreatedAtAction(nameof(ObterUsuarioPorId), new { id = resultado.Value.Id }, resultado.Value);
+    }
+
+    [HttpPost("membros")]
+    [Authorize(Roles = nameof(PerfilUsuario.Administrador))]
+    public async Task<IActionResult> CadastrarMembro(
+        [FromBody] CadastrarMembroRequest request,
+        CancellationToken ct)
+    {
+        var command = new CadastrarMembroTenantCommand(
+            request.Nome,
+            request.Email,
+            request.Senha,
+            request.Perfil);
+
         var resultado = await mediator.Send(command, ct);
 
         if (resultado.IsFailed)

@@ -44,6 +44,7 @@ builder.Services
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.SigningKey)),
             NameClaimType = JwtRegisteredClaimNames.Sub,
+            RoleClaimType = "role",
             ClockSkew = TimeSpan.FromSeconds(30)
         };
 

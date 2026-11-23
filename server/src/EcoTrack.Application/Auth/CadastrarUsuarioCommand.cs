@@ -8,9 +8,7 @@ namespace EcoTrack.Application.Auth;
 public sealed record CadastrarUsuarioCommand(
     string? Nome,
     string? Email,
-    string? Senha,
-    string? Perfil,
-    Guid? TenantId)
+    string? Senha)
     : IRequest<Result<UsuarioDto>>;
 
 public sealed record UsuarioDto(Guid Id, string Nome, string Email, string Perfil, Guid TenantId);
@@ -43,25 +41,13 @@ public sealed class CadastrarUsuarioCommandHandler(IGerenciadorIdentidade identi
                 "senha"));
         }
 
-        string? perfilNormalizado = null;
-
-        if (string.IsNullOrWhiteSpace(command.Perfil)
-            || !Enum.TryParse<PerfilUsuario>(command.Perfil.Trim(), ignoreCase: true, out var perfilEnum)
-            || !Enum.IsDefined(perfilEnum))
-        {
-            erros.Add(Erros.Criar("Perfil inválido ou não informado.", "perfil"));
-        }
-        else
-        {
-            perfilNormalizado = perfilEnum.ToString();
-        }
-
         if (erros.Count > 0)
         {
             return Result.Fail<UsuarioDto>(erros);
         }
 
-        var tenantId = command.TenantId ?? Guid.NewGuid();
+        var tenantId = Guid.CreateVersion7();
+        const string perfilInicial = nameof(PerfilUsuario.Administrador);
 
         try
         {
@@ -70,7 +56,7 @@ public sealed class CadastrarUsuarioCommandHandler(IGerenciadorIdentidade identi
                 command.Nome!.Trim(),
                 command.Email!.Trim(),
                 command.Senha!,
-                perfilNormalizado!,
+                perfilInicial,
                 ct);
 
             var usuarioDto = new UsuarioDto(

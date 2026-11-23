@@ -1,13 +1,22 @@
 using EcoTrack.Application.Licencas;
+using EcoTrack.Domain.Auth;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcoTrack.WebApi.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class LicencasController : ControllerBase
 {
+    private const string PerfisEscrita =
+        $"{nameof(PerfilUsuario.Gestor)},{nameof(PerfilUsuario.Administrador)}";
+
+    private const string PerfilExclusao =
+        nameof(PerfilUsuario.Administrador);
+
     private readonly IMediator _mediator;
 
     public LicencasController(IMediator mediator)
@@ -64,6 +73,7 @@ public class LicencasController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = PerfisEscrita)]
     public async Task<IActionResult> Criar([FromBody] CriarLicencaRequest request, CancellationToken cancellationToken)
     {
         var command = new CriarLicencaCommand(request);
@@ -76,6 +86,7 @@ public class LicencasController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = PerfisEscrita)]
     public async Task<IActionResult> Atualizar(Guid id, [FromBody] AtualizarLicencaRequest request, CancellationToken cancellationToken)
     {
         var command = new AtualizarLicencaCommand(id, request);
@@ -94,6 +105,7 @@ public class LicencasController : ControllerBase
     }
 
     [HttpPost("{id:guid}/protocolo-renovacao")]
+    [Authorize(Roles = PerfisEscrita)]
     public async Task<IActionResult> RegistrarProtocoloRenovacao(
         Guid id,
         [FromBody] RegistrarProtocoloRenovacaoRequest request,
@@ -115,6 +127,7 @@ public class LicencasController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = PerfilExclusao)]
     public async Task<IActionResult> Excluir(Guid id, CancellationToken cancellationToken)
     {
         var command = new ExcluirLicencaCommand(id);

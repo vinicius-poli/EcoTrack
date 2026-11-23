@@ -77,7 +77,7 @@ export class Cadastro {
       nome: this.modeloFormulario().nome.trim(),
       email: this.modeloFormulario().email.trim(),
       senha: this.modeloFormulario().senha,
-      perfil: this.modeloFormulario().perfil
+      perfil: 'Administrador'
     };
 
     this.mensagemErro.set('');
