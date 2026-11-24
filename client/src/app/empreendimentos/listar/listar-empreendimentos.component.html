@@ -68,7 +68,16 @@
               </p>
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex flex-wrap items-center gap-2.5">
+              @if (authService.podeEscrever()) {
+                <a
+                  [routerLink]="['/empreendimentos', item.id, 'editar']"
+                  class="rounded-xl border border-[#E6DDD2] bg-white px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-emerald-600 hover:bg-emerald-50 hover:text-emerald-800"
+                >
+                  Editar
+                </a>
+              }
+
               <a
                 [routerLink]="['/empreendimentos', item.id]"
                 class="rounded-xl border border-emerald-700/30 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-700 hover:text-white"
@@ -76,18 +85,14 @@
                 Detalhes
               </a>
 
-              <!-- Exemplo caso tenha ação de excluir na listagem -->
-              <!--
-              <button
-                type="button"
-                [disabled]="!authService.podeExcluir()"
-                [title]="authService.podeExcluir() ? 'Excluir empreendimento' : 'Apenas Administrador pode excluir'"
-                (click)="excluirEmpreendimento(item.id)"
-                class="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-red-50 disabled:hover:text-red-700"
-              >
-                Excluir
-              </button>
-              -->
+              @if (authService.podeExcluir()) {
+                <a
+                  [routerLink]="['/empreendimentos', item.id, 'excluir']"
+                  class="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-600 hover:text-white"
+                >
+                  Excluir
+                </a>
+              }
             </div>
           </article>
         }
