@@ -1,0 +1,278 @@
+<main class="min-h-screen bg-[#F7F3EE] text-stone-800">
+  <app-navbar />
+
+  <section class="mx-auto max-w-3xl px-6 py-10">
+    <div class="mb-6">
+      <a
+        routerLink="/licencas"
+        class="text-sm font-medium text-emerald-700 transition hover:text-emerald-800"
+      >
+        ← Voltar para listagem
+      </a>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-stone-900">
+        Nova Licença Ambiental
+      </h1>
+      <p class="mt-1 text-sm text-stone-600">
+        Registre os dados da licença, prazos de validade e antecedência para protocolo de renovação.
+      </p>
+    </div>
+
+    @if (semPermissaoEscrita()) {
+      <div class="mb-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        Seu perfil atual é somente leitura. Apenas <strong>Gestor</strong> ou <strong>Administrador</strong> podem cadastrar licenças.
+      </div>
+    }
+
+    <form
+      (submit)="cadastrarLicenca($event)"
+      novalidate
+      class="space-y-5 rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-7 shadow-sm"
+    >
+      <div>
+        <label for="empreendimentoId" class="mb-1.5 block text-sm font-medium text-stone-700">
+          Empreendimento
+        </label>
+        <select
+          id="empreendimentoId"
+          [formField]="formularioLicenca.empreendimentoId"
+          class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+        >
+          <option value="">
+            {{ carregandoEmpreendimentos() ? 'Carregando empreendimentos...' : 'Selecione um empreendimento' }}
+          </option>
+          @for (emp of empreendimentos(); track emp.id) {
+            <option [value]="emp.id">
+              {{ emp.nomeFantasia }} ({{ emp.municipio }} - {{ emp.uf }})
+            </option>
+          }
+        </select>
+        @if (
+          formularioLicenca.empreendimentoId().touched() &&
+          formularioLicenca.empreendimentoId().invalid()
+        ) {
+          @for (erro of formularioLicenca.empreendimentoId().errors(); track erro.message) {
+            <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+          }
+        }
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label for="numeroLicenca" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Número da Licença
+          </label>
+          <input
+            id="numeroLicenca"
+            type="text"
+            [formField]="formularioLicenca.numeroLicenca"
+            placeholder="Ex.: LAO-2026-00412"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+          @if (
+            formularioLicenca.numeroLicenca().touched() &&
+            formularioLicenca.numeroLicenca().invalid()
+          ) {
+            @for (erro of formularioLicenca.numeroLicenca().errors(); track erro.message) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+
+        <div>
+          <label for="numeroProcesso" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Número do Processo
+          </label>
+          <input
+            id="numeroProcesso"
+            type="text"
+            [formField]="formularioLicenca.numeroProcesso"
+            placeholder="Ex.: IMA-SC-12345/2026"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+          @if (
+            formularioLicenca.numeroProcesso().touched() &&
+            formularioLicenca.numeroProcesso().invalid()
+          ) {
+            @for (erro of formularioLicenca.numeroProcesso().errors(); track erro.message) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-3">
+        <div>
+          <label for="tipo" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Tipo de Licença
+          </label>
+          <select
+            id="tipo"
+            [formField]="formularioLicenca.tipo"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          >
+            <option [value]="1">LP — Licença Prévia</option>
+            <option [value]="2">LI — Licença de Instalação</option>
+            <option [value]="3">LO — Licença de Operação</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="status" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Status
+          </label>
+          <select
+            id="status"
+            [formField]="formularioLicenca.status"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          >
+            <option [value]="1">Vigente</option>
+            <option [value]="2">Em Renovação</option>
+            <option [value]="3">Vencida</option>
+            <option [value]="4">Suspensa / Cancelada</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="orgaoEmissor" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Órgão Emissor
+          </label>
+          <input
+            id="orgaoEmissor"
+            type="text"
+            [formField]="formularioLicenca.orgaoEmissor"
+            placeholder="Ex.: IMA-SC / FATMA"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+          @if (
+            formularioLicenca.orgaoEmissor().touched() &&
+            formularioLicenca.orgaoEmissor().invalid()
+          ) {
+            @for (erro of formularioLicenca.orgaoEmissor().errors(); track erro.message) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-3">
+        <div>
+          <label for="dataEmissao" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Data de Emissão
+          </label>
+          <input
+            id="dataEmissao"
+            type="date"
+            [formField]="formularioLicenca.dataEmissao"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+          @if (
+            formularioLicenca.dataEmissao().touched() &&
+            formularioLicenca.dataEmissao().invalid()
+          ) {
+            @for (erro of formularioLicenca.dataEmissao().errors(); track erro.message) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+
+        <div>
+          <label for="dataValidade" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Data de Validade
+          </label>
+          <input
+            id="dataValidade"
+            type="date"
+            [formField]="formularioLicenca.dataValidade"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+          @if (
+            formularioLicenca.dataValidade().touched() &&
+            formularioLicenca.dataValidade().invalid()
+          ) {
+            @for (erro of formularioLicenca.dataValidade().errors(); track erro.message) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+
+        <div>
+          <label
+            for="diasAntecedenciaRenovacao"
+            class="mb-1.5 block text-sm font-medium text-stone-700"
+          >
+            Antecedência Renovação (dias)
+          </label>
+          <input
+            id="diasAntecedenciaRenovacao"
+            type="number"           
+            [formField]="formularioLicenca.diasAntecedenciaRenovacao"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+          @if (
+            formularioLicenca.diasAntecedenciaRenovacao().touched() &&
+            formularioLicenca.diasAntecedenciaRenovacao().invalid()
+          ) {
+            @for (erro of formularioLicenca.diasAntecedenciaRenovacao().errors(); track erro.message) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="grid gap-5 border-t border-[#E6DDD2] pt-5 sm:grid-cols-2">
+        <div>
+          <label
+            for="numeroProtocoloRenovacao"
+            class="mb-1.5 block text-sm font-medium text-stone-700"
+          >
+            Protocolo de Renovação (opcional)
+          </label>
+          <input
+            id="numeroProtocoloRenovacao"
+            type="text"
+            [formField]="formularioLicenca.numeroProtocoloRenovacao"
+            placeholder="Ex.: PROT-2026-8891"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+        </div>
+
+        <div>
+          <label
+            for="dataProtocoloRenovacao"
+            class="mb-1.5 block text-sm font-medium text-stone-700"
+          >
+            Data do Protocolo de Renovação (opcional)
+          </label>
+          <input
+            id="dataProtocoloRenovacao"
+            type="date"
+            [formField]="formularioLicenca.dataProtocoloRenovacao"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+        </div>
+      </div>
+
+      @if (mensagemErro()) {
+        <div class="whitespace-pre-line rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {{ mensagemErro() }}
+        </div>
+      }
+
+      <div class="flex items-center justify-end gap-3 pt-3">
+        <a
+          routerLink="/licencas"
+          class="rounded-xl border border-[#E6DDD2] bg-white px-5 py-2.5 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
+        >
+          Cancelar
+        </a>
+        <button
+          type="submit"
+          [disabled]="enviandoFormulario() || semPermissaoEscrita()"
+          class="rounded-xl bg-emerald-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {{ enviandoFormulario() ? 'Salvando...' : 'Salvar Licença' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</main>

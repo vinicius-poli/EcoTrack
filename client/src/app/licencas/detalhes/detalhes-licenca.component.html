@@ -1,0 +1,193 @@
+<main class="min-h-screen bg-[#F7F3EE] text-stone-800">
+  <app-navbar />
+
+  <section class="mx-auto max-w-4xl px-6 py-10">
+    <div class="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+      <div>
+        <a
+          routerLink="/licencas"
+          class="text-sm font-medium text-emerald-700 transition hover:text-emerald-800"
+        >
+          ← Voltar para listagem
+        </a>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-stone-900">
+          Detalhes da Licença Ambiental
+        </h1>
+        <p class="mt-1 text-sm text-stone-600">
+          Dados do processo, vigência, prazos de renovação e protocolo vinculado.
+        </p>
+      </div>
+
+      @if (licenca(); as item) {
+        <div class="flex flex-wrap items-center gap-2.5">
+          @if (authService.podeEscrever()) {
+            <a
+              [routerLink]="['/licencas', item.id, 'editar']"
+              class="rounded-xl border border-[#E6DDD2] bg-white px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-emerald-600 hover:bg-emerald-50 hover:text-emerald-800"
+            >
+              Editar
+            </a>
+          }
+
+          @if (authService.podeExcluir()) {
+            <a
+              [routerLink]="['/licencas', item.id, 'excluir']"
+              class="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-600 hover:text-white"
+            >
+              Excluir
+            </a>
+          }
+        </div>
+      }
+    </div>
+
+    @if (carregando()) {
+      <div class="rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-10 text-center shadow-sm">
+        <p class="text-sm font-medium text-stone-600">Carregando detalhes da licença...</p>
+      </div>
+    } @else if (naoEncontrado()) {
+      <div class="rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-10 text-center shadow-sm">
+        <p class="text-base font-semibold text-stone-800">Licença não encontrada.</p>
+        <p class="mt-1 text-sm text-stone-500">
+          O registro pode ter sido removido ou o identificador informado é inválido.
+        </p>
+        <a
+          routerLink="/licencas"
+          class="mt-5 inline-flex rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800"
+        >
+          Voltar para listagem
+        </a>
+      </div>
+    } @else if (mensagemErro()) {
+      <div class="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-sm text-red-700">
+        {{ mensagemErro() }}
+      </div>
+    } @else if (licenca(); as item) {
+      <div class="space-y-6 rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-7 shadow-sm">
+        <div class="flex flex-col justify-between gap-3 border-b border-[#E6DDD2] pb-5 sm:flex-row sm:items-start">
+          <div>
+            <div class="flex flex-wrap items-center gap-2.5">
+              <h2 class="font-mono text-2xl font-bold text-stone-900">{{ item.numeroLicenca }}</h2>
+              <span class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-0.5 text-xs font-semibold text-emerald-800">
+                {{ formatarTipo(item.tipo) }}
+              </span>
+            </div>
+            <p class="mt-1.5 text-sm text-stone-600">
+              Processo: <strong class="font-mono text-stone-800">{{ item.numeroProcesso }}</strong> ·
+              Órgão emissor: <strong class="text-stone-800">{{ item.orgaoEmissor }}</strong>
+            </p>
+          </div>
+
+          <span class="self-start rounded-full border border-[#E6DDD2] bg-white px-3.5 py-1 text-xs font-semibold text-stone-700">
+            Status: {{ formatarStatus(item.status) }}
+          </span>
+        </div>
+
+        <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Data de Emissão
+            </dt>
+            <dd class="mt-1 font-mono text-sm font-medium text-stone-900">
+              {{ formatarData(item.dataEmissao) }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Data de Validade
+            </dt>
+            <dd class="mt-1 font-mono text-sm font-semibold text-stone-900">
+              {{ formatarData(item.dataValidade) }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Antecedência Renovação
+            </dt>
+            <dd class="mt-1 text-sm font-medium text-stone-900">
+              {{ item.diasAntecedenciaRenovacao }} dias
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Data Limite Protocolo
+            </dt>
+            <dd class="mt-1 font-mono text-sm font-semibold text-emerald-800">
+              {{ formatarData(item.dataLimiteProtocoloRenovacao) }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Protocolo de Renovação
+            </dt>
+            <dd class="mt-1 font-mono text-sm text-stone-900">
+              {{ item.numeroProtocoloRenovacao || '—' }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Data do Protocolo
+            </dt>
+            <dd class="mt-1 font-mono text-sm text-stone-900">
+              {{ formatarData(item.dataProtocoloRenovacao) }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4 sm:col-span-2 lg:col-span-3">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Empreendimento Vinculado (ID)
+            </dt>
+            <dd class="mt-1 flex flex-wrap items-center justify-between gap-2">
+              <span class="font-mono text-xs text-stone-700">{{ item.empreendimentoId }}</span>
+              <a
+                [routerLink]="['/empreendimentos', item.empreendimentoId]"
+                class="text-xs font-semibold text-emerald-700 transition hover:text-emerald-800"
+              >
+                Abrir empreendimento →
+              </a>
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Criado em (UTC)
+            </dt>
+            <dd class="mt-1 font-mono text-xs text-stone-700">
+              {{ formatarDataHora(item.createdAtUtc) }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4 sm:col-span-2">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Atualizado em (UTC)
+            </dt>
+            <dd class="mt-1 font-mono text-xs text-stone-700">
+              {{ formatarDataHora(item.updatedAtUtc) }}
+            </dd>
+          </div>
+        </dl>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 border-t border-[#E6DDD2] pt-5">
+          <a
+            routerLink="/licencas"
+            class="rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
+          >
+            ← Voltar para Licenças
+          </a>
+
+          <a
+            routerLink="/condicionantes"
+            class="rounded-xl bg-sky-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-800"
+          >
+            Ver Condicionantes
+          </a>
+        </div>
+      </div>
+    }
+  </section>
+</main>

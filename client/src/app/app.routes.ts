@@ -53,6 +53,46 @@ export const routes: Routes = [
         (m) => m.DetalhesEmpreendimentoComponent,
       ),
   },
+  {
+    path: 'licencas',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./licencas/listar/listar-licencas.component').then(
+        (m) => m.ListarLicencasComponent,
+      ),
+  },
+  {
+    path: 'licencas/cadastrar',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./licencas/cadastrar/cadastrar-licenca.component').then(
+        (m) => m.CadastrarLicencaComponent,
+      ),
+  },
+  {
+    path: 'licencas/:id/editar',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./licencas/editar/editar-licenca.component').then(
+        (m) => m.EditarLicencaComponent,
+      ),
+  },
+  {
+    path: 'licencas/:id/excluir',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./licencas/excluir/excluir-licenca.component').then(
+        (m) => m.ExcluirLicencaComponent,
+      ),
+  },
+  {
+    path: 'licencas/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./licencas/detalhes/detalhes-licenca.component').then(
+        (m) => m.DetalhesLicencaComponent,
+      ),
+  },
   // { path: 'condicionantes', canActivate: [authGuard], ... },
   { path: '**', redirectTo: 'home' },
 ];
