@@ -1,56 +1,5 @@
 <main class="min-h-screen bg-[#F7F3EE] text-stone-800">
-  <!-- Faixa superior -->
-  <nav class="border-b border-[#E6DDD2] bg-[#FCF9F5]/90 backdrop-blur">
-    <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-      <div class="flex items-center gap-3">
-        <div class="flex items-center">
-          <img
-            src="/logo-ecotrack-grande.png"
-            alt="EcoTrack"
-            class="h-12 w-auto object-contain"
-          />
-        </div>
-      </div>
-
-      <div class="flex items-center gap-5 text-base font-medium text-stone-600">
-        <a routerLink="/empreendimentos" class="transition hover:text-emerald-700">Empreendimentos</a>
-        <a routerLink="/condicionantes" class="transition hover:text-sky-700">Condicionantes</a>
-
-        @if (estaAutenticado()) {
-          <button
-            type="button"
-            (click)="sair()"
-            [disabled]="saindo()"
-            class="inline-flex items-center gap-2 rounded-xl border border-[#E6DDD2] bg-white px-3.5 py-2 text-sm font-semibold text-stone-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="h-4 w-4"
-              aria-hidden="true"
-            >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" x2="9" y1="12" y2="12" />
-            </svg>
-            <span>{{ saindo() ? 'Saindo...' : 'Sair' }}</span>
-          </button>
-        } @else {
-          <a
-            routerLink="/login"
-            class="rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800"
-          >
-            Entrar
-          </a>
-        }
-      </div>
-    </div>
-  </nav>
+  <app-navbar />
 
   <!-- Conteúdo principal -->
   <section class="mx-auto max-w-5xl px-6 py-12">

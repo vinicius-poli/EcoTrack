@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { form, FormField, maxLength, minLength, required } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import {
   CriarEmpreendimentoRequest,
   PorteEmpreendimento,
@@ -25,7 +26,7 @@ interface ApiValidationProblemDetails {
 }
 
 @Component({
-  imports: [FormField, RouterLink],
+  imports: [FormField, RouterLink, NavbarComponent],
   selector: 'app-cadastrar-empreendimento',
   templateUrl: './cadastrar-empreendimento.component.html',
 })
@@ -83,14 +84,14 @@ export class CadastrarEmpreendimentoComponent {
     const modelo = this.modeloEmpreendimento();
 
     const request: CriarEmpreendimentoRequest = {
-    razaoSocial: modelo.razaoSocial.trim(),
-    nomeFantasia: modelo.nomeFantasia.trim(),
-    cnpj: modelo.cnpj.trim(),
-    municipio: modelo.municipio.trim(),
-    uf: modelo.uf.trim().toUpperCase(),
-    porte: Number(modelo.porte) as PorteEmpreendimento,
-    statusLicenciamento: Number(modelo.statusLicenciamento) as StatusLicenciamento,
-  };
+      razaoSocial: modelo.razaoSocial.trim(),
+      nomeFantasia: modelo.nomeFantasia.trim(),
+      cnpj: modelo.cnpj.trim(),
+      municipio: modelo.municipio.trim(),
+      uf: modelo.uf.trim().toUpperCase(),
+      porte: Number(modelo.porte) as PorteEmpreendimento,
+      statusLicenciamento: Number(modelo.statusLicenciamento) as StatusLicenciamento,
+    };
 
     this.enviandoFormulario.set(true);
     this.mensagemErro.set('');

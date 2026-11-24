@@ -35,6 +35,11 @@ public class JwtTokenGenerator : IEmissorTokens
             new(ClaimTypes.Role, usuario.Perfil)
         };
 
+        if (!string.IsNullOrWhiteSpace(usuario.NomeOrganizacao))
+        {
+            claims.Add(new Claim("nome_organizacao", usuario.NomeOrganizacao));
+        }
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),

@@ -14,7 +14,8 @@ public sealed record CredenciaisUsuario(
     Guid TenantId,
     string Nome,
     string Email,
-    string Perfil
+    string Perfil,
+    string? NomeOrganizacao = null
 );
 
 public sealed record TokenDto(

@@ -24,6 +24,36 @@ export class AuthService {
   public readonly usuario = computed(() => this.sessaoSignal()?.usuario ?? null);
   public readonly estaAutenticado = computed(() => Boolean(this.token()));
 
+  public readonly nomeUsuario = computed<string | null>(() => {
+    const sessaoAtual = this.sessaoSignal();
+    if (!sessaoAtual?.token) return null;
+
+    return (
+      sessaoAtual.usuario?.nome ??
+      this.extrairClaimDoJwt(sessaoAtual.token, [
+        'name',
+        'unique_name',
+        'nome',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name',
+      ])
+    );
+  });
+
+  public readonly nomeOrganizacao = computed<string | null>(() => {
+    const sessaoAtual = this.sessaoSignal();
+    if (!sessaoAtual?.token) return null;
+
+    return (
+      sessaoAtual.usuario?.nomeOrganizacao ??
+      this.extrairClaimDoJwt(sessaoAtual.token, [
+        'nome_organizacao',
+        'organizacao',
+        'organization',
+        'NomeOrganizacao',
+      ])
+    );
+  });
+
   public readonly perfil = computed<PerfilUsuario | null>(() => {
     const sessaoAtual = this.sessaoSignal();
     if (!sessaoAtual?.token) return null;
@@ -51,7 +81,11 @@ export class AuthService {
       tap((resposta) => {
         const jwt = resposta.token ?? resposta.accessToken;
         if (jwt) {
-          this.salvarSessao({ token: jwt });
+          const usuarioFromClaims = this.montarUsuarioParcialDoJwt(jwt);
+          this.salvarSessao({
+            token: jwt,
+            usuario: usuarioFromClaims ?? undefined,
+          });
         }
       }),
     );
@@ -99,13 +133,91 @@ export class AuthService {
       const raw = localStorage.getItem(SESSAO_STORAGE_KEY);
       if (!raw) return null;
 
-      return JSON.parse(raw) as SessaoAutenticada;
+      const sessao = JSON.parse(raw) as SessaoAutenticada;
+      if (!sessao?.token) return null;
+
+      return {
+        ...sessao,
+        usuario: sessao.usuario ?? this.montarUsuarioParcialDoJwt(sessao.token) ?? undefined,
+      };
     } catch {
       return null;
     }
   }
 
-  private extrairRoleDoJwt(jwt: string): string | null {
+  private montarUsuarioParcialDoJwt(jwt: string): UsuarioDto | null {
+    const payload = this.decodificarPayloadJwt(jwt);
+    if (!payload) return null;
+
+    const id =
+      this.lerClaimString(payload, [
+        'sub',
+        'nameid',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier',
+      ]) ?? '';
+
+    const tenantId =
+      this.lerClaimString(payload, ['tenantId', 'tenant_id', 'TenantId']) ?? '';
+
+    const nome =
+      this.lerClaimString(payload, [
+        'name',
+        'unique_name',
+        'nome',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name',
+      ]) ?? '';
+
+    const email =
+      this.lerClaimString(payload, [
+        'email',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress',
+      ]) ?? '';
+
+    const roleClaim = this.extrairRoleDoJwt(jwt);
+    const perfil: PerfilUsuario | string = this.ehPerfilValido(roleClaim)
+      ? roleClaim
+      : (roleClaim ?? '');
+
+    const nomeOrganizacao = this.lerClaimString(payload, [
+      'nome_organizacao',
+      'organizacao',
+      'organization',
+      'NomeOrganizacao',
+    ]);
+
+    if (!id && !nome && !email && !nomeOrganizacao) {
+      return null;
+    }
+
+    return {
+      id,
+      tenantId,
+      nome,
+      email,
+      perfil,
+      nomeOrganizacao,
+    };
+  }
+
+  private extrairClaimDoJwt(jwt: string, chaves: string[]): string | null {
+    const payload = this.decodificarPayloadJwt(jwt);
+    if (!payload) return null;
+
+    return this.lerClaimString(payload, chaves);
+  }
+
+  private lerClaimString(payload: Record<string, unknown>, chaves: string[]): string | null {
+    for (const chave of chaves) {
+      const valor = payload[chave];
+      if (typeof valor === 'string' && valor.trim().length > 0) {
+        return valor.trim();
+      }
+    }
+
+    return null;
+  }
+
+  private decodificarPayloadJwt(jwt: string): Record<string, unknown> | null {
     try {
       const partes = jwt.split('.');
       if (partes.length < 2) return null;
@@ -114,19 +226,24 @@ export class AuthService {
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
       const jsonPayload = atob(padded);
-      const payload = JSON.parse(jsonPayload) as Record<string, unknown>;
-
-      const role =
-        payload['role'] ??
-        payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-
-      if (typeof role === 'string') return role;
-      if (Array.isArray(role) && typeof role[0] === 'string') return role[0];
-
-      return null;
+      return JSON.parse(jsonPayload) as Record<string, unknown>;
     } catch {
       return null;
     }
+  }
+
+  private extrairRoleDoJwt(jwt: string): string | null {
+    const payload = this.decodificarPayloadJwt(jwt);
+    if (!payload) return null;
+
+    const role =
+      payload['role'] ??
+      payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+
+    if (typeof role === 'string') return role;
+    if (Array.isArray(role) && typeof role[0] === 'string') return role[0];
+
+    return null;
   }
 
   private ehPerfilValido(valor: string | undefined | null): valor is PerfilUsuario {

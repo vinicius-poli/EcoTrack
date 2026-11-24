@@ -2,6 +2,7 @@ import { AuthService } from '../../auth/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { EmpreendimentoDto } from '../empreendimento.models';
 import { EmpreendimentoService } from '../empreendimento.service';
 
@@ -10,7 +11,7 @@ interface ApiValidationProblemDetails {
 }
 
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, NavbarComponent],
   selector: 'app-listar-empreendimentos',
   templateUrl: './listar-empreendimentos.component.html',
 })

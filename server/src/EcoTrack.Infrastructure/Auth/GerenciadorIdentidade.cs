@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EcoTrack.Infrastructure.Auth;
 
-public sealed class GerenciadorIdentidade(UserManager<EcoTrackUser> userManager)
+public sealed class GerenciadorIdentidade(
+    UserManager<EcoTrackUser> userManager,
+    IOrganizacaoRepository organizacaoRepository)
     : IGerenciadorIdentidade
 {
     public async Task<UsuarioDto> CadastrarAsync(
@@ -64,12 +66,15 @@ public sealed class GerenciadorIdentidade(UserManager<EcoTrackUser> userManager)
 
         await userManager.ResetAccessFailedCountAsync(user);
 
+        var organizacao = await organizacaoRepository.ObterPorIdAsync(user.TenantId, cancellationToken);
+
         return new CredenciaisUsuario(
             user.Id,
             user.TenantId,
             user.Nome,
             user.Email!,
-            user.Perfil
+            user.Perfil,
+            organizacao?.Nome
         );
     }
 
