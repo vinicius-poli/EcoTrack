@@ -1,0 +1,145 @@
+<main class="min-h-screen bg-[#F7F3EE] text-stone-800">
+  <app-navbar />
+
+  <section class="mx-auto max-w-3xl px-6 py-10">
+    <div class="mb-6">
+      <a
+        routerLink="/condicionantes"
+        class="text-sm font-medium text-emerald-700 transition hover:text-emerald-800"
+      >
+        ← Voltar para listagem
+      </a>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-stone-900">
+        Excluir Condicionante
+      </h1>
+      <p class="mt-1 text-sm text-stone-600">
+        Confira os dados da condicionante antes de confirmar a exclusão permanente.
+      </p>
+    </div>
+
+    @if (carregando()) {
+      <div class="rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-10 text-center shadow-sm">
+        <p class="text-sm font-medium text-stone-600">Carregando dados da condicionante...</p>
+      </div>
+    } @else if (naoEncontrado()) {
+      <div class="rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-10 text-center shadow-sm">
+        <p class="text-base font-semibold text-stone-800">Condicionante não encontrada.</p>
+        <p class="mt-1 text-sm text-stone-500">
+          O registro pode já ter sido removido ou o identificador informado é inválido.
+        </p>
+        <a
+          routerLink="/condicionantes"
+          class="mt-5 inline-flex rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800"
+        >
+          Voltar para listagem
+        </a>
+      </div>
+    } @else if (condicionante(); as item) {
+      @if (semPermissaoExclusao()) {
+        <div class="mb-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Seu perfil não tem permissão para excluir registros. Apenas <strong>Administrador</strong> pode confirmar a exclusão.
+        </div>
+      }
+
+      <div class="rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-7 shadow-sm">
+        <div class="rounded-xl border border-red-200 bg-red-50/80 p-4 text-sm text-red-800">
+          <p class="font-semibold">Atenção: esta ação não pode ser desfeita.</p>
+          <p class="mt-1 text-red-700">
+            Ao excluir a condicionante, o registro e suas informações vinculadas serão removidos do sistema.
+          </p>
+        </div>
+
+        <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Código do Item
+            </dt>
+            <dd class="mt-1 font-mono text-sm font-semibold text-stone-900">
+              {{ item.codigoItem }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Data de Vencimento
+            </dt>
+            <dd class="mt-1 font-mono text-sm font-medium text-stone-900">
+              {{ formatarData(item.dataVencimento) }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4 sm:col-span-2">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Título e Descrição
+            </dt>
+            <dd class="mt-1 text-sm font-semibold text-stone-900">{{ item.titulo }}</dd>
+            <dd class="mt-1 text-sm text-stone-600">{{ item.descricao }}</dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">Status</dt>
+            <dd class="mt-1 text-sm font-medium text-stone-900">
+              {{ formatarStatus(item.status) }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Nível de Risco
+            </dt>
+            <dd class="mt-1">
+              <span
+                class="inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium"
+                [class]="classeNivelRisco(item.nivelRisco)"
+              >
+                {{ formatarNivelRisco(item.nivelRisco) }}
+              </span>
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Periodicidade
+            </dt>
+            <dd class="mt-1 text-sm font-medium text-stone-900">
+              {{ formatarPeriodicidade(item.periodicidade) }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Evidências Vinculadas
+            </dt>
+            <dd class="mt-1 text-sm font-semibold text-stone-900">
+              {{ item.quantidadeEvidencias }}
+            </dd>
+          </div>
+        </dl>
+
+        @if (mensagemErro()) {
+          <div class="mt-5 whitespace-pre-line rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {{ mensagemErro() }}
+          </div>
+        }
+
+        <div class="mt-6 flex items-center justify-end gap-3 border-t border-[#E6DDD2] pt-5">
+          <a
+            routerLink="/condicionantes"
+            class="rounded-xl border border-[#E6DDD2] bg-white px-5 py-2.5 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
+          >
+            Cancelar
+          </a>
+
+          <button
+            type="button"
+            [disabled]="excluindo() || semPermissaoExclusao()"
+            (click)="confirmarExclusao()"
+            class="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {{ excluindo() ? 'Excluindo...' : 'Confirmar Exclusão' }}
+          </button>
+        </div>
+      </div>
+    }
+  </section>
+</main>

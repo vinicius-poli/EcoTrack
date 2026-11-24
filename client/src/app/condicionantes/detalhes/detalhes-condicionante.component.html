@@ -1,0 +1,320 @@
+<main class="min-h-screen bg-[#F7F3EE] text-stone-800">
+  <app-navbar />
+
+  <section class="mx-auto max-w-4xl px-6 py-10">
+    <div class="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+      <div>
+        <a
+          routerLink="/condicionantes"
+          class="text-sm font-medium text-emerald-700 transition hover:text-emerald-800"
+        >
+          ← Voltar para listagem
+        </a>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-stone-900">
+          Detalhes da Condicionante
+        </h1>
+        <p class="mt-1 text-sm text-stone-600">
+          Exigência ambiental, prazos, nível de risco, responsável técnico e evidências vinculadas.
+        </p>
+      </div>
+
+      @if (condicionante(); as item) {
+        <div class="flex flex-wrap items-center gap-2.5">
+          @if (authService.podeEscrever()) {
+            <a
+              [routerLink]="['/condicionantes', item.id, 'editar']"
+              class="rounded-xl border border-[#E6DDD2] bg-white px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-emerald-600 hover:bg-emerald-50 hover:text-emerald-800"
+            >
+              Editar
+            </a>
+          }
+
+          @if (authService.podeExcluir()) {
+            <a
+              [routerLink]="['/condicionantes', item.id, 'excluir']"
+              class="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-600 hover:text-white"
+            >
+              Excluir
+            </a>
+          }
+        </div>
+      }
+    </div>
+
+    @if (carregando()) {
+      <div class="rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-10 text-center shadow-sm">
+        <p class="text-sm font-medium text-stone-600">Carregando detalhes da condicionante...</p>
+      </div>
+    } @else if (naoEncontrado()) {
+      <div class="rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-10 text-center shadow-sm">
+        <p class="text-base font-semibold text-stone-800">Condicionante não encontrada.</p>
+        <p class="mt-1 text-sm text-stone-500">
+          O registro pode ter sido removido ou o identificador informado é inválido.
+        </p>
+        <a
+          routerLink="/condicionantes"
+          class="mt-5 inline-flex rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800"
+        >
+          Voltar para listagem
+        </a>
+      </div>
+    } @else if (mensagemErro()) {
+      <div class="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-sm text-red-700">
+        {{ mensagemErro() }}
+      </div>
+    } @else if (condicionante(); as item) {
+      <div class="space-y-6 rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-7 shadow-sm">
+        <div class="flex flex-col justify-between gap-3 border-b border-[#E6DDD2] pb-5 sm:flex-row sm:items-start">
+          <div>
+            <div class="flex flex-wrap items-center gap-2.5">
+              <span class="rounded-lg border border-[#E6DDD2] bg-white px-2.5 py-0.5 font-mono text-xs font-semibold text-stone-700">
+                {{ item.codigoItem }}
+              </span>
+              <h2 class="text-2xl font-bold text-stone-900">{{ item.titulo }}</h2>
+            </div>
+            <p class="mt-2 whitespace-pre-line text-sm text-stone-700">{{ item.descricao }}</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 sm:flex-col sm:items-end">
+            <span class="rounded-full border border-[#E6DDD2] bg-white px-3.5 py-1 text-xs font-semibold text-stone-700">
+              Status: {{ formatarStatus(item.status) }}
+            </span>
+            <span
+              class="rounded-full border px-3.5 py-1 text-xs font-semibold"
+              [class]="classeNivelRisco(item.nivelRisco)"
+            >
+              Risco: {{ formatarNivelRisco(item.nivelRisco) }}
+            </span>
+          </div>
+        </div>
+
+        <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Data de Vencimento
+            </dt>
+            <dd class="mt-1 font-mono text-sm font-semibold text-stone-900">
+              {{ formatarData(item.dataVencimento) }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Periodicidade
+            </dt>
+            <dd class="mt-1 text-sm font-medium text-stone-900">
+              {{ formatarPeriodicidade(item.periodicidade) }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Quantidade de Evidências
+            </dt>
+            <dd class="mt-1 text-sm font-semibold text-emerald-800">
+              {{ item.quantidadeEvidencias }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4 sm:col-span-2">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Responsável Técnico
+            </dt>
+            <dd class="mt-1 text-sm font-medium text-stone-900">
+              {{ item.responsavelTecnico || '—' }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Licença Vinculada
+            </dt>
+            <dd class="mt-1">
+              <a
+                [routerLink]="['/licencas', item.licencaId]"
+                class="font-mono text-xs font-semibold text-emerald-700 transition hover:text-emerald-800"
+              >
+                {{ item.licencaId }} →
+              </a>
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Criado em (UTC)
+            </dt>
+            <dd class="mt-1 font-mono text-xs text-stone-700">
+              {{ formatarDataHora(item.createdAtUtc) }}
+            </dd>
+          </div>
+
+          <div class="rounded-xl border border-[#E6DDD2] bg-white p-4 sm:col-span-2">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Atualizado em (UTC)
+            </dt>
+            <dd class="mt-1 font-mono text-xs text-stone-700">
+              {{ formatarDataHora(item.updatedAtUtc) }}
+            </dd>
+          </div>
+        </dl>
+
+        <div class="border-t border-[#E6DDD2] pt-6">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-sm font-semibold uppercase tracking-wide text-stone-700">
+              Evidências ({{ item.quantidadeEvidencias }})
+            </h3>
+            @if (item.evidencias.length > 0) {
+              <span class="font-mono text-xs text-stone-500">
+                {{ item.evidencias.length }} registro(s) listado(s)
+              </span>
+            }
+          </div>
+
+          @if (item.evidencias.length > 0) {
+            <ul class="mt-3.5 space-y-2.5">
+              @for (ev of item.evidencias; track ev.id) {
+                <li class="flex flex-col justify-between gap-3 rounded-xl border border-[#E6DDD2] bg-white px-4 py-3 text-sm sm:flex-row sm:items-center">
+                  <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="font-medium text-stone-900">
+                        {{ ev.nomeArquivo || ev.descricao || ev.id }}
+                      </span>
+                      @if (ev.createdAtUtc) {
+                        <span class="font-mono text-xs text-stone-500">
+                          · {{ formatarDataHora(ev.createdAtUtc) }}
+                        </span>
+                      }
+                    </div>
+                    @if (ev.descricao && ev.nomeArquivo) {
+                      <p class="mt-1 text-xs text-stone-600">{{ ev.descricao }}</p>
+                    }
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      [disabled]="baixandoEvidenciaId() === ev.id"
+                      (click)="baixarEvidencia(ev)"
+                      class="rounded-lg border border-emerald-700/30 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 transition hover:bg-emerald-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {{ baixandoEvidenciaId() === ev.id ? 'Baixando...' : 'Baixar' }}
+                    </button>
+
+                    @if (authService.podeExcluir()) {
+                      <button
+                        type="button"
+                        [disabled]="excluindoEvidenciaId() === ev.id"
+                        (click)="excluirEvidencia(ev.id)"
+                        class="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {{ excluindoEvidenciaId() === ev.id ? 'Excluindo...' : 'Excluir' }}
+                      </button>
+                    }
+                  </div>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="mt-3 rounded-xl border border-dashed border-[#E6DDD2] bg-white/70 px-4 py-4 text-center text-xs text-stone-500">
+              Nenhuma evidência anexada a esta condicionante até o momento.
+            </p>
+          }
+
+          @if (authService.podeEscrever()) {
+            <form
+              (submit)="enviarEvidencia($event)"
+              class="mt-5 space-y-4 rounded-xl border border-[#E6DDD2] bg-white p-5"
+            >
+              <div>
+                <p class="text-sm font-semibold text-stone-900">Anexar Nova Evidência</p>
+                <p class="mt-0.5 text-xs text-stone-500">
+                  Envie PDF, imagem, planilha ou documento comprobatório do atendimento da condicionante.
+                </p>
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label
+                    for="arquivoEvidencia"
+                    class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-stone-600"
+                  >
+                    Arquivo
+                  </label>
+                  @for (chave of [inputArquivoChave()]; track chave) {
+                    <input
+                      id="arquivoEvidencia"
+                      type="file"
+                      accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx,.xls,.xlsx,.csv"
+                      (change)="aoSelecionarArquivo($event)"
+                      class="block w-full rounded-xl border border-[#E6DDD2] bg-[#FCF9F5] px-3 py-2 text-xs text-stone-700 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-700 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-emerald-800"
+                    />
+                  }
+                  @if (arquivoEvidencia(); as arq) {
+                    <p class="mt-1 font-mono text-xs text-stone-600">
+                      Selecionado: {{ arq.name }} ({{ (arq.size / 1024).toFixed(1) }} KB)
+                    </p>
+                  }
+                </div>
+
+                <div>
+                  <label
+                    for="descricaoEvidencia"
+                    class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-stone-600"
+                  >
+                    Descrição / Observação (opcional)
+                  </label>
+                  <input
+                    id="descricaoEvidencia"
+                    type="text"
+                    [value]="descricaoEvidencia()"
+                    (input)="atualizarDescricaoEvidencia($event)"
+                    placeholder="Ex.: Laudo de efluentes — 4º trimestre"
+                    class="w-full rounded-xl border border-[#E6DDD2] bg-[#FCF9F5] px-3.5 py-2 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+                  />
+                </div>
+              </div>
+
+              @if (mensagemEvidenciaErro()) {
+                <div class="whitespace-pre-line rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-xs text-red-700">
+                  {{ mensagemEvidenciaErro() }}
+                </div>
+              }
+
+              @if (mensagemEvidenciaSucesso()) {
+                <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-medium text-emerald-800">
+                  {{ mensagemEvidenciaSucesso() }}
+                </div>
+              }
+
+              <div class="flex justify-end">
+                <button
+                  type="submit"
+                  [disabled]="enviandoEvidencia() || !arquivoEvidencia()"
+                  class="rounded-xl bg-emerald-700 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {{ enviandoEvidencia() ? 'Enviando...' : 'Enviar Evidência' }}
+                </button>
+              </div>
+            </form>
+          }
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 border-t border-[#E6DDD2] pt-5">
+          <a
+            routerLink="/condicionantes"
+            class="rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
+          >
+            ← Voltar para Condicionantes
+          </a>
+
+          <a
+            [routerLink]="['/licencas', item.licencaId]"
+            class="rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+          >
+            Ver Licença Vinculada
+          </a>
+        </div>
+      </div>
+    }
+  </section>
+</main>

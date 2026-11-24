@@ -1,0 +1,245 @@
+<main class="min-h-screen bg-[#F7F3EE] text-stone-800">
+  <app-navbar />
+
+  <section class="mx-auto max-w-3xl px-6 py-10">
+    <div class="mb-6">
+      <a
+        routerLink="/condicionantes"
+        class="text-sm font-medium text-emerald-700 transition hover:text-emerald-800"
+      >
+        ← Voltar para listagem
+      </a>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-stone-900">
+        Editar Condicionante
+      </h1>
+      <p class="mt-1 text-sm text-stone-600">
+        Atualize os dados, prazos, periodicidade, responsável técnico ou status de cumprimento.
+      </p>
+    </div>
+
+    @if (carregando()) {
+      <div class="rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-10 text-center shadow-sm">
+        <p class="text-sm font-medium text-stone-600">Carregando dados da condicionante...</p>
+      </div>
+    } @else if (naoEncontrado()) {
+      <div class="rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-10 text-center shadow-sm">
+        <p class="text-base font-semibold text-stone-800">Condicionante não encontrada.</p>
+        <p class="mt-1 text-sm text-stone-500">
+          O registro pode ter sido removido ou o identificador informado é inválido.
+        </p>
+        <a
+          routerLink="/condicionantes"
+          class="mt-5 inline-flex rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800"
+        >
+          Voltar para listagem
+        </a>
+      </div>
+    } @else {
+      @if (semPermissaoEscrita()) {
+        <div class="mb-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Seu perfil atual é somente leitura. Apenas <strong>Gestor</strong> ou <strong>Administrador</strong> podem salvar alterações.
+        </div>
+      }
+
+      <form
+        (submit)="salvarAlteracoes($event)"
+        novalidate
+        class="space-y-5 rounded-2xl border border-[#E6DDD2] bg-[#FCF9F5] p-7 shadow-sm"
+      >
+        <div>
+          <label for="licencaId" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Licença Ambiental
+          </label>
+          <select
+            id="licencaId"
+            [formField]="formularioCondicionante.licencaId"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          >
+            <option value="">
+              {{ carregandoLicencas() ? 'Carregando licenças...' : 'Selecione uma licença' }}
+            </option>
+            @for (lic of licencas(); track lic.id) {
+              <option [value]="lic.id">
+                {{ lic.numeroLicenca }} — Processo {{ lic.numeroProcesso }} ({{ lic.orgaoEmissor }})
+              </option>
+            }
+          </select>
+          @if (
+            formularioCondicionante.licencaId().touched() &&
+            formularioCondicionante.licencaId().invalid()
+          ) {
+            @for (erro of formularioCondicionante.licencaId().errors(); track erro.message) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+
+        <div class="grid gap-5 sm:grid-cols-3">
+          <div>
+            <label for="codigoItem" class="mb-1.5 block text-sm font-medium text-stone-700">
+              Código do Item
+            </label>
+            <input
+              id="codigoItem"
+              type="text"
+              [formField]="formularioCondicionante.codigoItem"
+              placeholder="Ex.: COND-01 / 2.3"
+              class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+            />
+            @if (
+              formularioCondicionante.codigoItem().touched() &&
+              formularioCondicionante.codigoItem().invalid()
+            ) {
+              @for (erro of formularioCondicionante.codigoItem().errors(); track erro.message) {
+                <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+              }
+            }
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="titulo" class="mb-1.5 block text-sm font-medium text-stone-700">
+              Título
+            </label>
+            <input
+              id="titulo"
+              type="text"
+              [formField]="formularioCondicionante.titulo"
+              placeholder="Ex.: Monitoramento de efluentes líquidos"
+              class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+            />
+            @if (
+              formularioCondicionante.titulo().touched() &&
+              formularioCondicionante.titulo().invalid()
+            ) {
+              @for (erro of formularioCondicionante.titulo().errors(); track erro.message) {
+                <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+              }
+            }
+          </div>
+        </div>
+
+        <div>
+          <label for="descricao" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Descrição
+          </label>
+          <textarea
+            id="descricao"
+            rows="4"
+            [formField]="formularioCondicionante.descricao"
+            placeholder="Descreva os critérios técnicos, frequência de coleta, relatórios exigidos ou regras de cumprimento..."
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          ></textarea>
+          @if (
+            formularioCondicionante.descricao().touched() &&
+            formularioCondicionante.descricao().invalid()
+          ) {
+            @for (erro of formularioCondicionante.descricao().errors(); track erro.message) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+
+        <div class="grid gap-5 sm:grid-cols-3">
+          <div>
+            <label for="periodicidade" class="mb-1.5 block text-sm font-medium text-stone-700">
+              Periodicidade
+            </label>
+            <select
+              id="periodicidade"
+              [formField]="formularioCondicionante.periodicidade"
+              class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+            >
+              <option [value]="1">Única</option>
+              <option [value]="2">Mensal</option>
+              <option [value]="3">Trimestral</option>
+              <option [value]="4">Semestral</option>
+              <option [value]="5">Anual</option>
+              <option [value]="6">Contínua</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="dataVencimento" class="mb-1.5 block text-sm font-medium text-stone-700">
+              Data de Vencimento
+            </label>
+            <input
+              id="dataVencimento"
+              type="date"
+              [formField]="formularioCondicionante.dataVencimento"
+              class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+            />
+            @if (
+              formularioCondicionante.dataVencimento().touched() &&
+              formularioCondicionante.dataVencimento().invalid()
+            ) {
+              @for (erro of formularioCondicionante.dataVencimento().errors(); track erro.message) {
+                <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+              }
+            }
+          </div>
+
+          <div>
+            <label for="status" class="mb-1.5 block text-sm font-medium text-stone-700">
+              Status
+            </label>
+            <select
+              id="status"
+              [formField]="formularioCondicionante.status"
+              class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+            >
+              <option [value]="1">Pendente</option>
+              <option [value]="2">Em Andamento</option>
+              <option [value]="3">Concluída</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label for="responsavelTecnico" class="mb-1.5 block text-sm font-medium text-stone-700">
+            Responsável Técnico (opcional)
+          </label>
+          <input
+            id="responsavelTecnico"
+            type="text"
+            [formField]="formularioCondicionante.responsavelTecnico"
+            placeholder="Ex.: Eng. Ambiental responsável ou consultoria"
+            class="w-full rounded-xl border border-[#E6DDD2] bg-white px-4 py-2.5 text-sm text-stone-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+          />
+          @if (
+            formularioCondicionante.responsavelTecnico().touched() &&
+            formularioCondicionante.responsavelTecnico().invalid()
+          ) {
+            @for (
+              erro of formularioCondicionante.responsavelTecnico().errors();
+              track erro.message
+            ) {
+              <p class="mt-1 text-xs font-medium text-red-600">{{ erro.message }}</p>
+            }
+          }
+        </div>
+
+        @if (mensagemErro()) {
+          <div class="whitespace-pre-line rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {{ mensagemErro() }}
+          </div>
+        }
+
+        <div class="flex items-center justify-end gap-3 pt-3">
+          <a
+            routerLink="/condicionantes"
+            class="rounded-xl border border-[#E6DDD2] bg-white px-5 py-2.5 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
+          >
+            Cancelar
+          </a>
+          <button
+            type="submit"
+            [disabled]="enviandoFormulario() || semPermissaoEscrita()"
+            class="rounded-xl bg-emerald-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {{ enviandoFormulario() ? 'Salvando...' : 'Salvar Alterações' }}
+          </button>
+        </div>
+      </form>
+    }
+  </section>
+</main>

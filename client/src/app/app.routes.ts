@@ -93,6 +93,46 @@ export const routes: Routes = [
         (m) => m.DetalhesLicencaComponent,
       ),
   },
+  {
+    path: 'condicionantes',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./condicionantes/listar/listar-condicionantes.component').then(
+        (m) => m.ListarCondicionantesComponent,
+      ),
+  },
+  {
+    path: 'condicionantes/cadastrar',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./condicionantes/cadastrar/cadastrar-condicionante.component').then(
+        (m) => m.CadastrarCondicionanteComponent,
+      ),
+  },
+  {
+    path: 'condicionantes/:id/editar',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./condicionantes/editar/editar-condicionante.component').then(
+        (m) => m.EditarCondicionanteComponent,
+      ),
+  },
+  {
+    path: 'condicionantes/:id/excluir',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./condicionantes/excluir/excluir-condicionante.component').then(
+        (m) => m.ExcluirCondicionanteComponent,
+      ),
+  },
+  {
+    path: 'condicionantes/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./condicionantes/detalhes/detalhes-condicionante.component').then(
+        (m) => m.DetalhesCondicionanteComponent,
+      ),
+  },
   // { path: 'condicionantes', canActivate: [authGuard], ... },
   { path: '**', redirectTo: 'home' },
 ];
