@@ -1,3 +1,43 @@
 @EcoTrack.WebApi_HostAddress = http://localhost:5200
 
+@AzureApp_HostAddress = https://ecotrack-webapi-febueegcctfsfgcq.westcentralus-01.azurewebsites.net
+
+### Registrar usuário
+POST {{AzureApp_HostAddress}}/api/auth/registrar
+Content-Type: application/json
+
+{
+  "nome": "Teste Usuario",
+  "email": "teste@ecotrack.local",
+  "senha": "Senha@123",
+  "nomeOrganizacao": "EcoTrack Ambiental"
+}
+
+### Login no Azure
+POST {{AzureApp_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "teste@ecotrack.local",
+  "senha": "Senha@123"
+}
+
+### Consultar endpoint protegido no Azure
+GET {{AzureApp_HostAddress}}/api/empreendimentos
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMWEyMTkzMi03MDdkLTdmMjEtOWI4Ny1iMjRiMjkzNDk5MTciLCJlbWFpbCI6InRlc3RlQGVjb3RyYWNrLmxvY2FsIiwidW5pcXVlX25hbWUiOiJUZXN0ZSBVc3VhcmlvIiwianRpIjoiNjA4MGZhYjItNTgyOC00MjBiLThkYzAtOWI4YjdhZDJiZWQ2IiwidGVuYW50X2lkIjoiMDFhMjE5MzItNmYwZi03YmM1LTljMjEtY2MwMzY1MzY1MTk1Iiwicm9sZSI6IkFkbWluaXN0cmFkb3IiLCJub21lX29yZ2FuaXphY2FvIjoiRWNvVHJhY2sgQW1iaWVudGFsIiwibmJmIjoxNzk1NzE5MTY3LCJleHAiOjE3OTU3NDc5NjcsImlhdCI6MTc5NTcxOTE2NywiaXNzIjoiRWNvVHJhY2suQXBpIiwiYXVkIjoiRWNvVHJhY2suQ2xpZW50In0.5TcB8ZrQKOZr0sRoogT9pAKtG2VSBtMx1kSC69eWStc
+
+### Criar empreendimento no Azure
+POST {{AzureApp_HostAddress}}/api/empreendimentos
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMWEyMTkzMi03MDdkLTdmMjEtOWI4Ny1iMjRiMjkzNDk5MTciLCJlbWFpbCI6InRlc3RlQGVjb3RyYWNrLmxvY2FsIiwidW5pcXVlX25hbWUiOiJUZXN0ZSBVc3VhcmlvIiwianRpIjoiMTY4Yzc4NGYtMzI1MC00MGI1LTg4YTYtYjQ1ODUxMDFlZDJiIiwidGVuYW50X2lkIjoiMDFhMjE5MzItNmYwZi03YmM1LTljMjEtY2MwMzY1MzY1MTk1Iiwicm9sZSI6IkFkbWluaXN0cmFkb3IiLCJub21lX29yZ2FuaXphY2FvIjoiRWNvVHJhY2sgQW1iaWVudGFsIiwibmJmIjoxNzk1NzE5NTU5LCJleHAiOjE3OTU3NDgzNTksImlhdCI6MTc5NTcxOTU1OSwiaXNzIjoiRWNvVHJhY2suQXBpIiwiYXVkIjoiRWNvVHJhY2suQ2xpZW50In0.o_Gn8vBAKbe4ume1Hqk--WDRH65xvvknz9Jx66yxg-0
+Content-Type: application/json
+
+{
+  "razaoSocial": "Unidade Industrial Alto Vale Ltda",
+  "nomeFantasia": "Unidade Industrial Alto Vale",
+  "cnpj": "12345678000199",
+  "municipio": "Rio do Sul",
+  "uf": "SC",
+  "porte": 1,
+  "statusLicenciamento": 1
+}
 ###

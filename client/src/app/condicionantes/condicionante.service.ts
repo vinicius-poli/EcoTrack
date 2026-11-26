@@ -10,7 +10,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class CondicionanteService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:5200/api/Condicionantes';
+  private readonly apiUrl = 'https://ecotrack-webapi-febueegcctfsfgcq.westcentralus-01.azurewebsites.net/api/condicionantes';
 
   selecionarTodos(licencaId?: string | null): Observable<CondicionanteDto[]> {
     let params = new HttpParams();

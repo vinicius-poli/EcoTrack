@@ -10,7 +10,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class EmpreendimentoService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:5200/api/empreendimentos'; // Ajustaremos via InjectionToken depois
+  private readonly apiUrl = 'https://ecotrack-webapi-febueegcctfsfgcq.westcentralus-01.azurewebsites.net/api/empreendimentos'; // Ajustaremos via InjectionToken depois
 
   selecionarTodos(): Observable<EmpreendimentoDto[]> {
     return this.http.get<EmpreendimentoDto[]>(this.apiUrl);

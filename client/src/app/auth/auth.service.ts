@@ -12,7 +12,7 @@ import {
 } from './auth.models';
 
 const SESSAO_STORAGE_KEY = 'ecotrack_sessao_autenticada';
-const AUTH_API_URL = 'http://localhost:5200/api/auth';
+const AUTH_API_URL = 'https://ecotrack-webapi-febueegcctfsfgcq.westcentralus-01.azurewebsites.net/api/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

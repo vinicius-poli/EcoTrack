@@ -10,7 +10,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class LicencaService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:5200/api/licencas'; // Ajustaremos via InjectionToken depois
+  private readonly apiUrl = 'https://ecotrack-webapi-febueegcctfsfgcq.westcentralus-01.azurewebsites.net/api/licencas'; // Ajustaremos via InjectionToken depois
 
   selecionarTodos(empreendimentoId?: string | null): Observable<LicencaDto[]> {
     let params = new HttpParams();
