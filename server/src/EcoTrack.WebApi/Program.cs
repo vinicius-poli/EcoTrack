@@ -138,6 +138,10 @@ if (app.Environment.IsDevelopment())
     {
         db.Database.Migrate();
     }
+
+    var mapper = scope.ServiceProvider.GetRequiredService<AutoMapper.IMapper>();
+    mapper.ConfigurationProvider.AssertConfigurationIsValid();
+    app.Logger.LogInformation("AutoMapper validado com sucesso.");
 }
 
 app.UseExceptionHandler(error => error.Run(async context =>
