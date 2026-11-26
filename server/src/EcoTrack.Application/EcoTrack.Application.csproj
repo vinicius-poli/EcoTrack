@@ -4,6 +4,11 @@
     <PackageReference Include="MediatR" Version="14.2.0" />
     <PackageReference Include="FluentResults" Version="4.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.13" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.NewRelic.Logs" Version="1.3.0" />  
+    <PackageReference Include="AutoMapper" Version="16.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -14,6 +19,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>72d580c7-d8d1-465e-a5e1-51513f23fef7</UserSecretsId>
   </PropertyGroup>
 
 </Project>

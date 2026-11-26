@@ -12,11 +12,13 @@ using EcoTrack.WebApi.Services;
 using EcoTrack.Infrastructure.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Registro dos serviços das camadas
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddApplication(builder.Configuration);
+builder.Services.AddApplication(builder.Configuration, builder.Logging);
+
 
 // Configuração de Autenticação e JWT
 builder.Services.AddScoped<IEmissorTokens, JwtTokenGenerator>();
