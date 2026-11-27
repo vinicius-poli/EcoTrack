@@ -5,4 +5,7 @@
     <Project Path="src/EcoTrack.Infrastructure/EcoTrack.Infrastructure.csproj" />
     <Project Path="src/EcoTrack.WebApi/EcoTrack.WebApi.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/EcoTrack.UnitTests/EcoTrack.UnitTests.csproj" />
+  </Folder>
 </Solution>
