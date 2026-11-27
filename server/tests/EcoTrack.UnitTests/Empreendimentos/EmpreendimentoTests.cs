@@ -3,7 +3,7 @@ using EcoTrack.Domain.Empreendimentos;
 namespace EcoTrack.UnitTests.Empreendimentos;
 
 [TestClass]
-public sealed class EmpreendimentoTest
+public sealed class EmpreendimentoTests
 {
     private static Empreendimento CriarEmpreendimentoValido() => new()
     {
